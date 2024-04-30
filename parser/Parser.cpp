@@ -30,6 +30,12 @@ public:
     }
 };
 
+Token createIdentificatorStateToken(const std::string & tokenValue) {
+    return Token::isKeyword(tokenValue)
+        ? Token(Token::TokenType::Keyword, tokenValue)
+        : Token(Token::TokenType::Identifier, tokenValue);
+}
+
 class Parser
 {
 public:
@@ -123,14 +129,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
                 case ParserState::Identifier:
-                    if (Token::isKeyword(tokenValue))
-                    {
-                        tokens.push_front(Token(Token::TokenType::Keyword, tokenValue));
-                    }
-                    else
-                    {
-                        tokens.push_front(Token(Token::TokenType::Identifier, tokenValue));
-                    }
+                    tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
                 case ParserState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
@@ -158,14 +157,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
                 case ParserState::Identifier:
-                    if (Token::isKeyword(tokenValue))
-                    {
-                        tokens.push_front(Token(Token::TokenType::Keyword, tokenValue));
-                    }
-                    else
-                    {
-                        tokens.push_front(Token(Token::TokenType::Identifier, tokenValue));
-                    }
+                    tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
                 case ParserState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
@@ -197,14 +189,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
                 case ParserState::Identifier:
-                    if (Token::isKeyword(tokenValue))
-                    {
-                        tokens.push_front(Token(Token::TokenType::Keyword, tokenValue));
-                    }
-                    else
-                    {
-                        tokens.push_front(Token(Token::TokenType::Identifier, tokenValue));
-                    }
+                    tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
                 case ParserState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
@@ -241,14 +226,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
                 case ParserState::Identifier:
-                    if (Token::isKeyword(tokenValue))
-                    {
-                        tokens.push_front(Token(Token::TokenType::Keyword, tokenValue));
-                    }
-                    else
-                    {
-                        tokens.push_front(Token(Token::TokenType::Identifier, tokenValue));
-                    }
+                    tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
                 case ParserState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
