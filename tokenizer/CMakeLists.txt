@@ -17,6 +17,8 @@ enable_testing()
 add_executable(
   tokenizer_test
   TokenizerTests.cpp
+  Token.cpp
+  Tokenizer.cpp
 )
 target_link_libraries(
   tokenizer_test

@@ -2,7 +2,8 @@
 #include <iostream>
 #include <list>
 #include <string>
-#include "Token.cpp"
+#include <sstream>
+#include "Tokenizer.h"
 
 enum TokenizerState
 {
@@ -17,20 +18,17 @@ enum TokenizerState
     Comment
 };
 
-class UnexpectedSymbolExeption: public std::exception
-{
-private:
-    const char _symbol;
-public:
-    UnexpectedSymbolExeption(char symbol) : _symbol(symbol) {}
+UnexpectedSymbolExeption::UnexpectedSymbolExeption(char symbol, const TokenPosition & position)
+    : _symbol(symbol), _position(position) {}
     
-    const char* what() const noexcept override
-    {
-        return "Unexpected symbol: " + _symbol;
-    }
-};
+const char* UnexpectedSymbolExeption::what() const noexcept
+{
+    std::ostringstream message;
+    message << "Unexpected symbol(" << _position.line << "," <<  _position.end - 1 << "): " << _symbol;
+    return std::string(message.str()).c_str();
+}
 
-void processAlphabitCh(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processAlphabitCh(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     switch (parserState)
     {
@@ -41,27 +39,27 @@ void processAlphabitCh(std::list<Token> & tokens, TokenizerState & parserState, 
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Breaket:
-        tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
+        tokens.push_front({ TokenType::Breaket, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Punctuation:
-        tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
+        tokens.push_front({ TokenType::Punctuation, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Operator:
-        tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
+        tokens.push_front({ TokenType::Operator, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::IntValue:
     case TokenizerState::FloatValue:
-        throw UnexpectedSymbolExeption(ch);
+        throw UnexpectedSymbolExeption(ch, position);
     }
 }
 
-void processDigit(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processDigit(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     switch (parserState)
     {
@@ -76,17 +74,17 @@ void processDigit(std::list<Token> & tokens, TokenizerState & parserState, std::
         tokenValue += ch;
         break;
     case TokenizerState::Breaket:
-        tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
+        tokens.push_front({ TokenType::Breaket, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
     case TokenizerState::Punctuation:
-        tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
+        tokens.push_front({ TokenType::Punctuation, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
     case TokenizerState::Operator:
-        tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
+        tokens.push_front({ TokenType::Operator, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
@@ -95,55 +93,58 @@ void processDigit(std::list<Token> & tokens, TokenizerState & parserState, std::
 
 bool tokenCanBeCreated(const TokenizerState & parserState)
 {
-    return parserState != TokenizerState::Space && parserState != TokenizerState::Start;
+    return parserState != TokenizerState::Space
+    && parserState != TokenizerState::Start
+    && parserState != TokenizerState::Comment;
 }
 
-Token createToken(const TokenizerState & parserState, const std::string & tokenValue)
+Token createToken(const TokenizerState & parserState, const std::string & tokenValue, const TokenPosition & position)
 {
     switch (parserState)
     {
     case TokenizerState::IntValue:
-        return Token(Token::TokenType::IntValue, tokenValue);
+        return { TokenType::IntValue, tokenValue, position };
     case TokenizerState::FloatValue:
-        return Token(Token::TokenType::FloatValue, tokenValue);
+        return { TokenType::FloatValue, tokenValue, position };
     case TokenizerState::Identifier:
-        return Token(
+        return {
             Token::isKeyword(tokenValue)
-                ? Token::TokenType::Keyword
-                : Token::TokenType::Identifier,
-            tokenValue
-        );
+                ? TokenType::Keyword
+                : TokenType::Identifier,
+            tokenValue,
+            position
+        };
     case TokenizerState::Breaket:
-        return Token(Token::TokenType::Breaket, tokenValue);
+        return { TokenType::Breaket, tokenValue, position };
     case TokenizerState::Punctuation:
-        return Token(Token::TokenType::Punctuation, tokenValue);
+        return { TokenType::Punctuation, tokenValue, position };
     case TokenizerState::Operator:
-        return Token(Token::TokenType::Operator, tokenValue);
+        return { TokenType::Operator, tokenValue, position };
     }
     throw std::exception();
 }
 
-void processBreaket(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processBreaket(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue));
+        tokens.push_front(createToken(parserState, tokenValue, position));
     }
     tokenValue = { ch };
     parserState = TokenizerState::Breaket;
 }
 
-void processPunctuation(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processPunctuation(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue));
+        tokens.push_front(createToken(parserState, tokenValue, position));
     }
     tokenValue = { ch };
     parserState = TokenizerState::Punctuation;
 }
 
-void processOperatorCh(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processOperatorCh(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     if (parserState == TokenizerState::Operator)
     {
@@ -161,24 +162,24 @@ void processOperatorCh(std::list<Token> & tokens, TokenizerState & parserState, 
     {
         if (tokenCanBeCreated(parserState))
         {
-            tokens.push_front(createToken(parserState, tokenValue));
+            tokens.push_front(createToken(parserState, tokenValue, position));
         }
         tokenValue = { ch };
         parserState = TokenizerState::Operator;
     }
 }
 
-void processSpace(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processSpace(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue));
+        tokens.push_front(createToken(parserState, tokenValue, position));
     }
     tokenValue = "";
     parserState = TokenizerState::Space;
 }
 
-void processDot(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch) 
+void processDot(TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {
     switch (parserState)
     {
@@ -193,78 +194,72 @@ void processDot(std::list<Token> & tokens, TokenizerState & parserState, std::st
     case TokenizerState::Operator:
     case TokenizerState::Space:
     case TokenizerState::Start:
-        throw UnexpectedSymbolExeption(ch);
+        throw UnexpectedSymbolExeption(ch, position);
     }
 }
 
-class Tokenizer
+std::list<Token> Tokenizer::parse(std::istream & input)
 {
-public:
-    static std::list<Token> parse(std::istream & input)
+    std::list<Token> tokens = std::list<Token>();
+    std::string tokenValue = "";
+    TokenizerState parserState = TokenizerState::Start;
+    size_t line = 1;
+    size_t chPosition = 1;
+    char ch;
+    while (input.get(ch)) 
     {
-        std::list<Token> tokens = std::list<Token>();
-        std::string tokenValue = "";
-        TokenizerState parserState = TokenizerState::Start;
-        char ch;
-        while (input.get(ch)) 
+        chPosition++;
+        if (ch != '\n' && parserState == TokenizerState::Comment)
         {
-            if (parserState == TokenizerState::Comment)
-            {
-                if (ch == '\n')
-                {
-                    parserState = TokenizerState::Space;
-                }
-                continue;
-            }
-            if (ch == '.')
-            {
-                processDot(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (isalpha(ch))
-            {
-                processAlphabitCh(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (isdigit(ch))
-            {
-                processDigit(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (ch == ')'
-                || ch == '('
-                || ch == '{'
-                || ch == '}')
-            {
-                processBreaket(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (ch == ';'
-                || ch == ',')
-            {
-                processPunctuation(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (ch == '+'
-                || ch == '-'
-                || ch == '/'
-                || ch == '*'
-                || ch == '|'
-                || ch == '&')
-            {
-                processOperatorCh(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            if (ch == '\n'
-                || ch == ' '
-                || ch == '\t')
-            {
-                processSpace(tokens, parserState, tokenValue, ch);
-                continue;
-            }
-            throw UnexpectedSymbolExeption(ch);
+            continue;
         }
-        return tokens;
+        if (ch == '\n')
+        {
+            processSpace(tokens, parserState, tokenValue, ch, { line, chPosition });
+            line++;
+            chPosition = 0;
+        }
+        else if (ch == '.')
+        {
+            processDot(parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (isalpha(ch))
+        {
+            processAlphabitCh(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (isdigit(ch))
+        {
+            processDigit(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (ch == ')'
+            || ch == '('
+            || ch == '{'
+            || ch == '}')
+        {
+            processBreaket(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (ch == ';' || ch == ',')
+        {
+            processPunctuation(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (ch == '+'
+            || ch == '-'
+            || ch == '/'
+            || ch == '*'
+            || ch == '|'
+            || ch == '&')
+        {
+            processOperatorCh(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else if (ch == ' ' || ch == '\t')
+        {
+            processSpace(tokens, parserState, tokenValue, ch, { line, chPosition });
+        }
+        else
+        {
+            throw UnexpectedSymbolExeption(ch, { line, chPosition });            
+        }
     }
-};
+    return tokens;
+}
  

@@ -1,20 +1,19 @@
+#pragma once
 #include <string>
 #include <array>
+#include <sstream>
 #include <algorithm>
+#include "Token.h"
 
-class UnknownOperatorExeption: public std::exception
-{
-private:
-    const std::string _operator;
-public:
-    UnknownOperatorExeption(const std::string & op) : _operator(op) {}
+UnknownOperatorExeption::UnknownOperatorExeption(const std::string & op, const TokenPosition & position)
+    : _operator(op), _position(position) {}
     
-    const char* what() const noexcept override
-    {
-        const std::string message = "Unknown operator: " + _operator;
-        return message.c_str();
-    }
-};
+const char* UnknownOperatorExeption::what() const noexcept
+{
+    std::ostringstream message;
+    message << "Unknown symbol(" << _position.line << "," <<  _position.end - _operator.size() << "): " << _operator;
+    return std::string(message.str()).c_str();
+}
 
 std::array<std::string, 12> definedOperators = {
     "||", "&&", "==", ">=", "<=", "<", ">", "*", "/", "+", "-", "="
@@ -41,61 +40,40 @@ bool isOperatorExist(const std::string & _operator)
     return inArr(definedOperators, _operator);
 }
 
-struct Token
+Token::Token(const TokenType & type, const std::string & value, const TokenPosition & position)
+        : type(type), value(value), position(position)
 {
-    enum class TokenType
+    if (type == TokenType::Operator && !isOperatorExist(value))
     {
-        Identifier,
-        Keyword,
-        IntValue,
-        FloatValue,
-        Punctuation,
-        Breaket,
-        Operator
-    };
-
-    const TokenType type;
-    const std::string value;
-
-    Token(const TokenType & type, const std::string & value)
-        : type(type), value(value)
-    {
-        if (type == TokenType::Operator && !isOperatorExist(value))
-        {
-            throw UnknownOperatorExeption(value);
-        }
+        throw UnknownOperatorExeption(value, position);
     }
+}
+
     
-    static bool isKeyword(const std::string & keyword)
-    {
-        return inArr(definedKeywords, keyword);
-    }
-};
+bool Token::isKeyword(const std::string & keyword)
+{
+    return inArr(definedKeywords, keyword);
+}
 
-std::ostream& operator<<(std::ostream& os, const Token::TokenType type)
+std::ostream& operator<<(std::ostream& os, const TokenType type)
 {
     switch(type)
     {
-        case Token::TokenType::Identifier:
+        case TokenType::Identifier:
             return os << std::string("Identifier");
-        case Token::TokenType::Keyword:
+        case TokenType::Keyword:
             return os << std::string("Keyword");
-        case Token::TokenType::IntValue:
+        case TokenType::IntValue:
             return os << std::string("IntValue");
-        case Token::TokenType::FloatValue:
+        case TokenType::FloatValue:
             return os << std::string("FloatValue");
-        case Token::TokenType::Punctuation:
+        case TokenType::Punctuation:
             return os << std::string("Punctuation");
-        case Token::TokenType::Breaket:
+        case TokenType::Breaket:
             return os << std::string("Breaket");
-        case Token::TokenType::Operator:
+        case TokenType::Operator:
             return os << std::string("Operator");
     }
 
     return os;
-}
-
-bool operator==(const Token & a, const Token & b)
-{
-    return a.value == b.value && a.type == b.type;
 }
