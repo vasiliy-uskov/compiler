@@ -45,5 +45,6 @@
         "iostream": "cpp",
         "list": "cpp",
         "istream": "cpp"
-    }
+    },
+    "cmake.sourceDirectory": "C:/projects/compiler/tokenizer"
 }
