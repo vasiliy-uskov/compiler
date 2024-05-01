@@ -1,5 +1,5 @@
 #include <iostream>
-#include "Parser.cpp"
+#include "Tokenizer.cpp"
 
 int main()
 {
