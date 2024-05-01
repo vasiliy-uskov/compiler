@@ -4,7 +4,7 @@
 int main()
 {
     try {
-        const std::list<Token> tokens = Parser::parse(std::cin);
+        const std::list<Token> tokens = Tokenizer::parse(std::cin);
         std::for_each(tokens.begin(), tokens.end(), [](Token token) {
             std::cout << token.type << ' ' << token.value << std::endl;
         });

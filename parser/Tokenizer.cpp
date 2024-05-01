@@ -4,7 +4,7 @@
 #include <string>
 #include "Token.cpp"
 
-enum ParserState
+enum TokenizerState
 {
     Start,
     Space,
@@ -36,22 +36,22 @@ Token createIdentificatorStateToken(const std::string & tokenValue) {
         : Token(Token::TokenType::Identifier, tokenValue);
 }
 
-class Parser
+class Tokenizer
 {
 public:
     static std::list<Token> parse(std::istream & input)
     {
         std::list<Token> tokens = std::list<Token>();
         std::string tokenValue = "";
-        ParserState parserState = ParserState::Start;
+        TokenizerState parserState = TokenizerState::Start;
         char ch;
         while (input.get(ch)) 
         {
-            if (parserState == ParserState::Comment)
+            if (parserState == TokenizerState::Comment)
             {
                 if (ch == '\n')
                 {
-                    parserState = ParserState::Space;
+                    parserState = TokenizerState::Space;
                 }
                 continue;
             }
@@ -59,26 +59,26 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::Start:
-                case ParserState::Space:
-                case ParserState::Identifier:
+                case TokenizerState::Start:
+                case TokenizerState::Space:
+                case TokenizerState::Identifier:
                     tokenValue += ch;
-                    parserState = ParserState::Identifier;
+                    parserState = TokenizerState::Identifier;
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::Identifier;
+                    parserState = TokenizerState::Identifier;
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::Identifier;
+                    parserState = TokenizerState::Identifier;
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::Identifier;
+                    parserState = TokenizerState::Identifier;
                     break;
                 }
                 continue;
@@ -87,30 +87,30 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::Start:
-                case ParserState::Space:
+                case TokenizerState::Start:
+                case TokenizerState::Space:
                     tokenValue += ch;
-                    parserState = ParserState::IntValue;
+                    parserState = TokenizerState::IntValue;
                     break;
-                case ParserState::IntValue:
-                case ParserState::FloatValue:
-                case ParserState::Identifier:
+                case TokenizerState::IntValue:
+                case TokenizerState::FloatValue:
+                case TokenizerState::Identifier:
                     tokenValue += ch;
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::IntValue;
+                    parserState = TokenizerState::IntValue;
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::IntValue;
+                    parserState = TokenizerState::IntValue;
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     tokenValue = ch + "";
-                    parserState = ParserState::IntValue;
+                    parserState = TokenizerState::IntValue;
                     break;
                 }
                 continue;
@@ -122,27 +122,27 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::IntValue:
+                case TokenizerState::IntValue:
                     tokens.push_front(Token(Token::TokenType::IntValue, tokenValue));
                     break;
-                case ParserState::FloatValue:
+                case TokenizerState::FloatValue:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
-                case ParserState::Identifier:
+                case TokenizerState::Identifier:
                     tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     break;
                 }
                 tokenValue = ch + "";
-                parserState = ParserState::Breaket;
+                parserState = TokenizerState::Breaket;
                 continue;
             }
             if (ch == ';'
@@ -150,27 +150,27 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::IntValue:
+                case TokenizerState::IntValue:
                     tokens.push_front(Token(Token::TokenType::IntValue, tokenValue));
                     break;
-                case ParserState::FloatValue:
+                case TokenizerState::FloatValue:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
-                case ParserState::Identifier:
+                case TokenizerState::Identifier:
                     tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     break;
                 }
                 tokenValue = ch + "";
-                parserState = ParserState::Punctuation;
+                parserState = TokenizerState::Punctuation;
                 continue;
             }
             if (ch == '+'
@@ -182,26 +182,26 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::IntValue:
+                case TokenizerState::IntValue:
                     tokens.push_front(Token(Token::TokenType::IntValue, tokenValue));
                     break;
-                case ParserState::FloatValue:
+                case TokenizerState::FloatValue:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
-                case ParserState::Identifier:
+                case TokenizerState::Identifier:
                     tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     if (tokenValue == "/")
                     {
                         tokenValue = "";
-                        parserState = ParserState::Comment;
+                        parserState = TokenizerState::Comment;
                     }
                     else
                     {
@@ -210,7 +210,7 @@ public:
                     break;
                 }
                 tokenValue = ch + "";
-                parserState = ParserState::Operator;
+                parserState = TokenizerState::Operator;
                 continue;
             }
             if (ch == '\n'
@@ -219,33 +219,33 @@ public:
             {
                 switch (parserState)
                 {
-                case ParserState::IntValue:
+                case TokenizerState::IntValue:
                     tokens.push_front(Token(Token::TokenType::IntValue, tokenValue));
                     break;
-                case ParserState::FloatValue:
+                case TokenizerState::FloatValue:
                     tokens.push_front(Token(Token::TokenType::FloatValue, tokenValue));
                     break;
-                case ParserState::Identifier:
+                case TokenizerState::Identifier:
                     tokens.push_front(createIdentificatorStateToken(tokenValue));
                     break;
-                case ParserState::Breaket:
+                case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
                     break;
-                case ParserState::Punctuation:
+                case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
                     break;
-                case ParserState::Operator:
+                case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     break;
                 }
                 tokenValue = "";
-                parserState = ParserState::Space;
+                parserState = TokenizerState::Space;
                 continue;
             }
-            if (ch == '.' && parserState == ParserState::IntValue)
+            if (ch == '.' && parserState == TokenizerState::IntValue)
             {
                 tokenValue += ch;
-                parserState = ParserState::FloatValue;
+                parserState = TokenizerState::FloatValue;
                 continue;
             }
             throw UnexpectedSymbolExeption(ch);
