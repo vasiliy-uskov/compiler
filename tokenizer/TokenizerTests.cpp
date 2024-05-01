@@ -36,8 +36,9 @@ TEST(TokenizerParseCorrectly, Tokens)
          Token(Token::TokenType::Punctuation, ","),
          Token(Token::TokenType::Identifier, "ddd3"),
          Token(Token::TokenType::Breaket, ")"),
-         Token(Token::TokenType::Punctuation, ";"),
+         Token(Token::TokenType::Punctuation, ";")
     });
+    checkTokenizerParseCorrect("//adsfa ? . q", {});
 }
 
 TEST(TokenizerParseExeption, UnknownOperator)
@@ -64,7 +65,11 @@ TEST(TokenizerParseExeption, UnexpectedSymbol)
     EXPECT_THROW(Tokenizer::parse(input), UnexpectedSymbolExeption);
     input = std::stringstream(" . ");
     EXPECT_THROW(Tokenizer::parse(input), UnexpectedSymbolExeption);
+    input = std::stringstream(". ");
+    EXPECT_THROW(Tokenizer::parse(input), UnexpectedSymbolExeption);
     input = std::stringstream("? ");
+    EXPECT_THROW(Tokenizer::parse(input), UnexpectedSymbolExeption);
+    input = std::stringstream("Что");
     EXPECT_THROW(Tokenizer::parse(input), UnexpectedSymbolExeption);
     input = std::stringstream("//adsfa ? . q");
     EXPECT_NO_THROW(Tokenizer::parse(input));
