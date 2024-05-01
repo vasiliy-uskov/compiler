@@ -64,24 +64,23 @@ public:
                 case TokenizerState::Identifier:
                     tokenValue += ch;
                     parserState = TokenizerState::Identifier;
-                    break;
+                    continue;
                 case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::Identifier;
-                    break;
+                    continue;
                 case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::Identifier;
-                    break;
+                    continue;
                 case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::Identifier;
-                    break;
+                    continue;
                 }
-                continue;
             }
             if (isdigit(ch))
             {
@@ -99,17 +98,17 @@ public:
                     break;
                 case TokenizerState::Breaket:
                     tokens.push_front(Token(Token::TokenType::Breaket, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::IntValue;
                     break;
                 case TokenizerState::Punctuation:
                     tokens.push_front(Token(Token::TokenType::Punctuation, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::IntValue;
                     break;
                 case TokenizerState::Operator:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
-                    tokenValue = ch + "";
+                    tokenValue = { ch };
                     parserState = TokenizerState::IntValue;
                     break;
                 }
@@ -141,7 +140,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     break;
                 }
-                tokenValue = ch + "";
+                tokenValue = { ch };
                 parserState = TokenizerState::Breaket;
                 continue;
             }
@@ -169,7 +168,7 @@ public:
                     tokens.push_front(Token(Token::TokenType::Operator, tokenValue));
                     break;
                 }
-                tokenValue = ch + "";
+                tokenValue = { ch };
                 parserState = TokenizerState::Punctuation;
                 continue;
             }
@@ -202,14 +201,11 @@ public:
                     {
                         tokenValue = "";
                         parserState = TokenizerState::Comment;
-                    }
-                    else
-                    {
-                        tokenValue += ch;
+                        continue;
                     }
                     break;
                 }
-                tokenValue = ch + "";
+                tokenValue += ch;
                 parserState = TokenizerState::Operator;
                 continue;
             }

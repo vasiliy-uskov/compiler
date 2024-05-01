@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.txt": "cmake",
         "string": "cpp",
         "array": "cpp",
         "atomic": "cpp",
@@ -44,7 +45,30 @@
         "typeinfo": "cpp",
         "iostream": "cpp",
         "list": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "sstream": "cpp",
+        "any": "cpp",
+        "charconv": "cpp",
+        "chrono": "cpp",
+        "condition_variable": "cpp",
+        "cstdarg": "cpp",
+        "cstring": "cpp",
+        "ctime": "cpp",
+        "forward_list": "cpp",
+        "map": "cpp",
+        "set": "cpp",
+        "unordered_set": "cpp",
+        "ratio": "cpp",
+        "format": "cpp",
+        "fstream": "cpp",
+        "iomanip": "cpp",
+        "mutex": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp",
+        "stop_token": "cpp",
+        "thread": "cpp",
+        "cinttypes": "cpp",
+        "variant": "cpp"
     },
     "cmake.sourceDirectory": "C:/projects/compiler/tokenizer"
 }

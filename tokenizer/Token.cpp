@@ -72,8 +72,6 @@ struct Token
     }
 };
 
-
-
 std::ostream& operator<<(std::ostream& os, const Token::TokenType type)
 {
     switch(type)
@@ -95,4 +93,9 @@ std::ostream& operator<<(std::ostream& os, const Token::TokenType type)
     }
 
     return os;
+}
+
+bool operator==(const Token & a, const Token & b)
+{
+    return a.value == b.value && a.type == b.type;
 }
