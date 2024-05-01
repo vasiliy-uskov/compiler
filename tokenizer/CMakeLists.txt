@@ -19,7 +19,7 @@ add_executable(
   TokenizerTests.cpp
 )
 target_link_libraries(
-    tokenizer_test
+  tokenizer_test
   GTest::gtest_main
 )
 
