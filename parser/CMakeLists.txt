@@ -19,6 +19,7 @@ add_executable(
   ParserTests.cpp
   Parser.cpp
 )
+
 target_link_libraries(
   parser_tests
   GTest::gtest_main
