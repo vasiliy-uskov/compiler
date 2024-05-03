@@ -1,18 +1,53 @@
 #pragma once
 #include <vector>
-#include <optional>
+#include <list>
 #include "../tokenizer/Token.h"
+
+enum SyntaxRule {
+    Program,
+    MainBody,
+
+    FunctionsList,
+    Function,
+
+    DefinitionArgumentsList,
+    DefinitionArgument,
+    CallArgumentsList,
+    CallArgument,
+
+    FunctionOperatorsList,
+    FunctionOperator,
+    OperatorsList,
+    Operator,
+
+    OperatorIf,
+    OperatorWhile,
+    OperatorReturn,
+    VariableDefinition,
+    AssignmentOperator,
+    FunctionCall,
+
+    Expression,
+    LogicalExpression,
+    ArithmeticExpression,
+
+
+    Breaket,
+    Punctuation,
+    Keyword,
+    Identifier,
+    IntValue,
+    FloatValue,
+    Type,
+};
 
 class SyntaxTree
 {
 public:
     const std::vector<SyntaxTree> children;
-    const std::optional<Token> token;
+    const std::list<Token> tokens;
+    const SyntaxRule rule;
 
-    SyntaxTree(const Token & token)
-        : token(token), children({}) {}
-    SyntaxTree(const std::vector<SyntaxTree> & children)
-        : token(), children(children) {}
-    SyntaxTree(const Token & token, const std::vector<SyntaxTree> & children)
-        : token(token), children(children) {}
+    SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens, const std::vector<SyntaxTree> & children = {})
+        : rule(rule), tokens(tokens), children(children) {}
 };

@@ -1,26 +1,404 @@
 #pragma once
 #include <list>
+#include <functional>
+#include <optional>
 #include "../tokenizer/Token.h"
 #include "SyntaxTree.cpp"
 
-std::pair<SyntaxTree, std::list<Token>::iterator> parserProgramm(std::list<Token>::iterator currentToken)
+typedef std::pair<std::optional<SyntaxTree>, std::list<Token>::iterator> ParsingResult;
+typedef std::list<Token>::iterator TokenIterator;
+typedef std::function<ParsingResult(std::list<Token>::iterator)> ParseFn;
+
+ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & startToken, const std::list<ParseFn> & rules)
 {
-    auto functionsList = parserFunctionsList(currentToken);
-    auto mainBody = parserFunctionsList(functionsList.second);
+    std::vector<SyntaxTree> children = {};
+    TokenIterator currentToken = startToken;
+    for (auto rule = rules.begin(); rule != rules.end(); rule++)
+    {
+        auto [ruleResult, ruleEndToken] = (*rule)(currentToken);
+        if (ruleResult.has_value())
+        {
+            children.push_back(ruleResult.value());
+        }
+        else
+        {
+            return {std::nullopt, currentToken};
+        }
+    }
     return {
-        SyntaxTree({functionsList.first, mainBody.first}),
-        mainBody.second,
+        SyntaxTree(rule, {startToken, currentToken}, children),
+        currentToken,
     };
 }
 
-std::pair<SyntaxTree, std::list<Token>::iterator> parserFunctionsList(std::list<Token>::iterator currentToken)
+ParsingResult processSyntaxRule(SyntaxRule rule, const TokenIterator & startToken, const std::list<std::list<ParseFn>> & ruleVariants)
 {
+    for (auto variant = ruleVariants.begin(); variant != ruleVariants.end(); variant++)
+    {
+        auto [ruleResult, ruleEndToken] = processSyntaxRuleVariant(rule, startToken, *variant);
+        if (ruleResult.has_value())
+        {
+            return {
+                ruleResult,
+                ruleEndToken
+            };
+        }
+    }
+    return {std::nullopt, startToken};
+}
+
+ParsingResult parseToken(SyntaxRule rule, TokenIterator tokenIt, std::function<bool(const Token&)> matcher)
+{
+    const auto token = *tokenIt;
+    const auto nextTokenIt = std::next(tokenIt, 1);
+    if (matcher(token))
+    {
+        return ParsingResult({
+            SyntaxTree(rule, {tokenIt, nextTokenIt}),
+            nextTokenIt,
+        });
+    }
+    return ParsingResult({std::nullopt, tokenIt});
     
 }
 
-std::pair<SyntaxTree, std::list<Token>::iterator> parserMainBody(std::list<Token>::iterator currentToken)
+ParseFn makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue)
 {
-    
+    return [rule, tokenValue](TokenIterator tokenIt) {
+        return parseToken(rule, tokenIt, [tokenValue](const Token & token) {
+            return token.value == tokenValue;
+        });
+    };
+}
+
+ParseFn makeTokenParserByType(SyntaxRule rule, TokenType tokenType)
+{
+    return [rule, tokenType](TokenIterator tokenIt) {
+        return parseToken(rule, tokenIt, [tokenType](const Token & token) {
+            return token.type == tokenType;
+        });
+    };
+}
+
+ParsingResult parseProgramm(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::Program, startToken, {
+        {parseFunctionsList, parseMainBody},
+        {parseMainBody}
+    });
+}
+
+ParsingResult parseFunctionsList(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::FunctionsList, startToken, {
+        {parseFunction, parseFunctionsList},
+        {parseFunction}
+    });
+}
+
+ParsingResult parseFunction(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::Function, startToken, {
+        {
+            parseType,
+            parseIdentifier,
+            makeBreaketParser("("),
+            parseDefinitionArgumentsList,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseFunctionOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        }, {
+            makeKeywordParser("void"),
+            parseIdentifier,
+            makeBreaketParser("("),
+            parseDefinitionArgumentsList,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        },
+    });
+}
+
+ParseFn makeBreaketParser(const std::string & breaket)
+{
+    return makeTokenParserByValue(SyntaxRule::Breaket, breaket);
+}
+
+ParseFn makePunctuationParser(const std::string & punctuation)
+{
+    return makeTokenParserByValue(SyntaxRule::Punctuation, punctuation);
+}
+
+ParseFn makeKeywordParser(const std::string & keyword)
+{
+    return makeTokenParserByValue(SyntaxRule::Keyword, keyword);
+}
+
+ParseFn makeOperatorTokenParser(const std::string & operatorTokenValue)
+{
+    return makeTokenParserByValue(SyntaxRule::Keyword, operatorTokenValue);
+}
+
+ParsingResult parseType(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::Type, startToken, {
+        {makeKeywordParser("int")},
+        {makeKeywordParser("float")},
+        {makeKeywordParser("bool")},
+    });
+}
+
+const ParseFn parseIdentifier = makeTokenParserByType(SyntaxRule::Identifier, TokenType::Identifier);
+const ParseFn parseIntValue = makeTokenParserByType(SyntaxRule::IntValue, TokenType::IntValue);
+const ParseFn parseFloatValue = makeTokenParserByType(SyntaxRule::FloatValue, TokenType::FloatValue);
+
+ParsingResult parseDefinitionArgumentsList(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::DefinitionArgumentsList, startToken, {
+        {parseDefinitionArgument, makePunctuationParser(","), parseDefinitionArgumentsList},
+        {parseDefinitionArgument}
+    });
+}
+
+ParsingResult parseDefinitionArgument(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::DefinitionArgumentsList, startToken, {
+        parseType, parseIdentifier
+    });
+}
+
+ParsingResult parseMainBody(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::MainBody, startToken, {
+        makeKeywordParser("main"),
+        makeBreaketParser("{"),
+        parseOperatorsList,
+        makePunctuationParser(";"),
+        makeBreaketParser("{"),
+    });
+}
+
+ParsingResult parseFunctionOperatorsList(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::FunctionOperatorsList, startToken, {
+        {parseFunctionOperator, makePunctuationParser(";"), parseFunctionOperatorsList},
+        {parseFunctionOperator}
+    });
+}
+
+ParsingResult parseFunctionOperator(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::FunctionOperator, startToken, {
+        {parseVariableDefinition},
+        {parseAssignment},
+        {parseFunctionCall},
+        {parseFunctionIfOperator},
+        {parseFunctionWhileOperator},
+        {parseReturnOperator},
+    });
+}
+
+ParsingResult parseFunctionIfOperator(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::OperatorIf, startToken, {
+        {
+            makeKeywordParser("if"),
+            makeBreaketParser("("),
+            parseLogicalExpression,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseFunctionOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        },
+        {
+            makeKeywordParser("if"),
+            makeBreaketParser("("),
+            parseLogicalExpression,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseFunctionOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+            makeKeywordParser("else"),
+            makeBreaketParser("{"),
+            parseFunctionOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        },
+    });
+   
+}
+
+ParsingResult parseFunctionWhileOperator(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::OperatorWhile, startToken, {
+        makeKeywordParser("while"),
+        makeBreaketParser("("),
+        parseLogicalExpression,
+        makeBreaketParser(")"),
+        makeBreaketParser("{"),
+        parseFunctionOperatorsList,
+        makePunctuationParser(";"),
+        makeBreaketParser("}"),
+    });
+}
+
+ParsingResult parseReturnOperator(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::OperatorReturn, startToken, {
+        makeKeywordParser("return"),
+        parseExpression,
+    });
+}
+
+ParsingResult parseOperatorsList(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::OperatorsList, startToken, {
+        {parseOperator, makePunctuationParser(";"), parseOperatorsList},
+        {parseOperator}
+    });
+}
+
+ParsingResult parseOperator(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::Operator, startToken, {
+        {parseVariableDefinition},
+        {parseAssignment},
+        {parseFunctionCall},
+        {parseIfOperator},
+        {parseWhileOperator},
+    });
+}
+
+ParsingResult parseIfOperator(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::OperatorIf, startToken, {
+        {
+            makeKeywordParser("if"),
+            makeBreaketParser("("),
+            parseLogicalExpression,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        },
+        {
+            makeKeywordParser("if"),
+            makeBreaketParser("("),
+            parseLogicalExpression,
+            makeBreaketParser(")"),
+            makeBreaketParser("{"),
+            parseOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+            makeKeywordParser("else"),
+            makeBreaketParser("{"),
+            parseOperatorsList,
+            makePunctuationParser(";"),
+            makeBreaketParser("}"),
+        },
+    });
+   
+}
+
+ParsingResult parseWhileOperator(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::OperatorWhile, startToken, {
+        makeKeywordParser("while"),
+        makeBreaketParser("("),
+        parseLogicalExpression,
+        makeBreaketParser(")"),
+        makeBreaketParser("{"),
+        parseOperatorsList,
+        makePunctuationParser(";"),
+        makeBreaketParser("}"),
+    });
+}
+
+ParsingResult parseVariableDefinition(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::VariableDefinition, startToken, {
+        {parseType, parseIdentifier},
+        {parseType, parseIdentifier, makeOperatorTokenParser("="), parseExpression},
+    });
+}
+
+ParsingResult parseAssignment(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::AssignmentOperator, startToken, {
+        parseIdentifier, makeOperatorTokenParser("="), parseExpression
+    });
+}
+
+ParsingResult parseFunctionCall(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::AssignmentOperator, startToken, {
+        parseIdentifier, makeBreaketParser("()"), parseCallArgumentsList, makeBreaketParser(")")
+    });
+}
+
+ParsingResult parseCallArgumentsList(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::CallArgumentsList, startToken, {
+        {parseCallArgument, makePunctuationParser(","), parseCallArgumentsList},
+        {parseCallArgument}
+    });
+}
+
+ParsingResult parseCallArgument(TokenIterator startToken)
+{
+    return processSyntaxRuleVariant(SyntaxRule::CallArgumentsList, startToken, {
+        parseType, parseIdentifier
+    });
+}
+
+ParsingResult parseExpression(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::Expression, startToken, {
+        {parseArithmeticExpression},
+        {parseLogicalExpression}
+    });    
+}
+
+ParsingResult parseLogicalExpression(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
+        {parseLogicalExpression, makeOperatorTokenParser("||"), parseLogicalExpression},
+        {parseLogicalExpression, makeOperatorTokenParser("&&"), parseLogicalExpression},
+
+        {parseArithmeticExpression, makeOperatorTokenParser("=="), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser("<"), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser("<="), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser(">"), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser(">="), parseArithmeticExpression},
+        {makeBreaketParser("("), parseLogicalExpression, makeBreaketParser(")")},
+        {parseFunctionCall},
+        {parseIdentifier},
+        {makeKeywordParser("true")},
+        {makeKeywordParser("false")},
+    });    
+}
+
+ParsingResult parseArithmeticExpression(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
+        {parseArithmeticExpression, makeOperatorTokenParser("+"), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser("-"), parseArithmeticExpression},
+        {makeOperatorTokenParser("-"), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser("*"), parseArithmeticExpression},
+        {parseArithmeticExpression, makeOperatorTokenParser("/"), parseArithmeticExpression},
+        {makeBreaketParser("("), parseArithmeticExpression, makeBreaketParser(")")},
+        {parseFunctionCall},
+        {parseIdentifier},
+        {parseIntValue},
+        {parseFloatValue}
+    });    
 }
 
 class Parser
