@@ -17,10 +17,10 @@ enable_testing()
 add_executable(
   parser_tests
   ParserTests.cpp
-  Parser.h
   Parser.cpp
-  SyntaxTree.h
   SyntaxTree.cpp
+  ../tokenizer/Tokenizer.cpp
+  ../tokenizer/Token.cpp
 )
 
 target_link_libraries(
