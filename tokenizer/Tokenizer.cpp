@@ -39,17 +39,17 @@ void processAlphabitCh(std::list<Token> & tokens, TokenizerState & parserState, 
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Breaket:
-        tokens.push_front({ TokenType::Breaket, tokenValue, position });
+        tokens.push_back({ TokenType::Breaket, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Punctuation:
-        tokens.push_front({ TokenType::Punctuation, tokenValue, position });
+        tokens.push_back({ TokenType::Punctuation, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
     case TokenizerState::Operator:
-        tokens.push_front({ TokenType::Operator, tokenValue, position });
+        tokens.push_back({ TokenType::Operator, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::Identifier;
         break;
@@ -74,17 +74,17 @@ void processDigit(std::list<Token> & tokens, TokenizerState & parserState, std::
         tokenValue += ch;
         break;
     case TokenizerState::Breaket:
-        tokens.push_front({ TokenType::Breaket, tokenValue, position });
+        tokens.push_back({ TokenType::Breaket, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
     case TokenizerState::Punctuation:
-        tokens.push_front({ TokenType::Punctuation, tokenValue, position });
+        tokens.push_back({ TokenType::Punctuation, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
     case TokenizerState::Operator:
-        tokens.push_front({ TokenType::Operator, tokenValue, position });
+        tokens.push_back({ TokenType::Operator, tokenValue, position });
         tokenValue = { ch };
         parserState = TokenizerState::IntValue;
         break;
@@ -128,7 +128,7 @@ void processBreaket(std::list<Token> & tokens, TokenizerState & parserState, std
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue, position));
+        tokens.push_back(createToken(parserState, tokenValue, position));
     }
     tokenValue = { ch };
     parserState = TokenizerState::Breaket;
@@ -138,7 +138,7 @@ void processPunctuation(std::list<Token> & tokens, TokenizerState & parserState,
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue, position));
+        tokens.push_back(createToken(parserState, tokenValue, position));
     }
     tokenValue = { ch };
     parserState = TokenizerState::Punctuation;
@@ -162,7 +162,7 @@ void processOperatorCh(std::list<Token> & tokens, TokenizerState & parserState, 
     {
         if (tokenCanBeCreated(parserState))
         {
-            tokens.push_front(createToken(parserState, tokenValue, position));
+            tokens.push_back(createToken(parserState, tokenValue, position));
         }
         tokenValue = { ch };
         parserState = TokenizerState::Operator;
@@ -173,7 +173,7 @@ void processSpace(std::list<Token> & tokens, TokenizerState & parserState, std::
 {
     if (tokenCanBeCreated(parserState))
     {
-        tokens.push_front(createToken(parserState, tokenValue, position));
+        tokens.push_back(createToken(parserState, tokenValue, position));
     }
     tokenValue = "";
     parserState = TokenizerState::Space;
@@ -247,7 +247,10 @@ std::list<Token> Tokenizer::parse(std::istream & input)
             || ch == '/'
             || ch == '*'
             || ch == '|'
-            || ch == '&')
+            || ch == '&'
+            || ch == '='
+            || ch == '<'
+            || ch == '>')
         {
             processOperatorCh(tokens, parserState, tokenValue, ch, { line, chPosition });
         }

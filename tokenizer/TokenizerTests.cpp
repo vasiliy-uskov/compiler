@@ -5,7 +5,6 @@
 
 void checkTokenizerParseCorrect(const std::string & inputString, std::list<Token> acceptableResult)
 {
-    acceptableResult.reverse();
     std::stringstream input = std::stringstream(inputString.c_str());
     std::list<Token> realResult = Tokenizer::parse(input);
     EXPECT_EQ(realResult.size(), acceptableResult.size());
@@ -18,7 +17,7 @@ void checkTokenizerParseCorrect(const std::string & inputString, std::list<Token
     }
 }
 
-TEST(TokenizerParseCorrectly, Tokens)
+TEST(TokenizerParseCorrectly, RandomTokens)
 {
     checkTokenizerParseCorrect("main equal //asfddf 132. 14\n 13.1 41 4 1. 915{} (f1, b2, ddd3);\n", {
          Token(TokenType::Keyword, "main", {0, 5}),
@@ -39,7 +38,40 @@ TEST(TokenizerParseCorrectly, Tokens)
          Token(TokenType::Breaket, ")", {1, 35}),
          Token(TokenType::Punctuation, ";", {1, 36})
     });
-    checkTokenizerParseCorrect("//adsfa ? . q", {});
+}
+
+TEST(TokenizerParseCorrectly, ProgramTokens)
+{
+    checkTokenizerParseCorrect(
+    std::string("main {\n")
+    + "  int a = 4;\n"
+    + "  int b = 3;\n"
+    + "  b = (b + a) * 4;\n"
+    + "}\n", {
+         Token(TokenType::Keyword, "main", {0, 5}),
+         Token(TokenType::Breaket, "{", {0, 7}),
+         Token(TokenType::Keyword, "int", {1, 6}),
+         Token(TokenType::Identifier, "a", {1, 8}),
+         Token(TokenType::Operator, "=", {1, 10}),
+         Token(TokenType::IntValue, "4", {1, 12}),
+         Token(TokenType::Punctuation, ";", {1, 13}),
+         Token(TokenType::Keyword, "int", {2, 6}),
+         Token(TokenType::Identifier, "b", {2, 8}),
+         Token(TokenType::Operator, "=", {2, 10}),
+         Token(TokenType::IntValue, "3", {2, 12}),
+         Token(TokenType::Punctuation, ";", {2, 13}),
+         Token(TokenType::Identifier, "b", {3, 4}),
+         Token(TokenType::Operator, "=", {3, 6}),
+         Token(TokenType::Breaket, "(", {3, 8}),
+         Token(TokenType::Identifier, "b", {3, 9}),
+         Token(TokenType::Operator, "+", {3, 11}),
+         Token(TokenType::Identifier, "a", {3, 13}),
+         Token(TokenType::Breaket, ")", {3, 14}),
+         Token(TokenType::Operator, "*", {3, 16}),
+         Token(TokenType::IntValue, "4", {3, 18}),
+         Token(TokenType::Punctuation, ";", {3, 19}),
+         Token(TokenType::Breaket, "}", {4, 2})
+    });
 }
 
 TEST(TokenizerParseExeption, UnknownOperator)
