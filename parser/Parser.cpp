@@ -1,13 +1,6 @@
 #pragma once
-#include <list>
-#include <functional>
-#include <optional>
-#include "../tokenizer/Token.h"
-#include "SyntaxTree.cpp"
-
-typedef std::pair<std::optional<SyntaxTree>, std::list<Token>::iterator> ParsingResult;
-typedef std::list<Token>::iterator TokenIterator;
-typedef std::function<ParsingResult(std::list<Token>::iterator)> ParseFn;
+#include "SyntaxTree.h"
+#include "Parser.h"
 
 ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & startToken, const std::list<ParseFn> & rules)
 {
@@ -27,7 +20,7 @@ ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & st
     }
     return {
         SyntaxTree(rule, {startToken, currentToken}, children),
-        currentToken,
+        currentToken
     };
 }
 
@@ -53,12 +46,12 @@ ParsingResult parseToken(SyntaxRule rule, TokenIterator tokenIt, std::function<b
     const auto nextTokenIt = std::next(tokenIt, 1);
     if (matcher(token))
     {
-        return ParsingResult({
+        return ParsingResult(
             SyntaxTree(rule, {tokenIt, nextTokenIt}),
-            nextTokenIt,
-        });
+            nextTokenIt
+        );
     }
-    return ParsingResult({std::nullopt, tokenIt});
+    return ParsingResult(std::nullopt, tokenIt);
     
 }
 
@@ -152,9 +145,21 @@ ParsingResult parseType(TokenIterator startToken)
     });
 }
 
-const ParseFn parseIdentifier = makeTokenParserByType(SyntaxRule::Identifier, TokenType::Identifier);
-const ParseFn parseIntValue = makeTokenParserByType(SyntaxRule::IntValue, TokenType::IntValue);
-const ParseFn parseFloatValue = makeTokenParserByType(SyntaxRule::FloatValue, TokenType::FloatValue);
+ParsingResult parseIdentifier(TokenIterator startToken)
+{
+    return makeTokenParserByType(SyntaxRule::Identifier, TokenType::Identifier)(startToken);
+}
+
+ParsingResult parseIntValue(TokenIterator startToken)
+{
+    return makeTokenParserByType(SyntaxRule::IntValue, TokenType::IntValue)(startToken);
+}
+
+ParsingResult parseFloatValue(TokenIterator startToken)
+{
+    return makeTokenParserByType(SyntaxRule::FloatValue, TokenType::FloatValue)(startToken);
+}
+
 
 ParsingResult parseDefinitionArgumentsList(TokenIterator startToken)
 {
@@ -371,7 +376,6 @@ ParsingResult parseLogicalExpression(TokenIterator startToken)
     return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseLogicalExpression, makeOperatorTokenParser("||"), parseLogicalExpression},
         {parseLogicalExpression, makeOperatorTokenParser("&&"), parseLogicalExpression},
-
         {parseArithmeticExpression, makeOperatorTokenParser("=="), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser("<"), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser("<="), parseArithmeticExpression},
@@ -401,11 +405,15 @@ ParsingResult parseArithmeticExpression(TokenIterator startToken)
     });    
 }
 
-class Parser
+SyntaxTree Parser::parse(std::list<Token> tokens)
 {
-public:
-    Parser(/* args */)
+    auto [SyntaxTreeOptional, endTokentIt] = parseProgramm(tokens.begin());
+    if (SyntaxTreeOptional.has_value())
     {
-
+        return SyntaxTreeOptional.value();
     }
-};
+    else
+    {
+        throw std::exception();
+    }
+}

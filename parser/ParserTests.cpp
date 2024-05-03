@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "Parser.cpp"
+#include "Parser.h"
 
 TEST(ParserParseCorrectly, Parser)
 {   
