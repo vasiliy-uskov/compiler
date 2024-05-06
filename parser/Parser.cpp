@@ -374,34 +374,73 @@ ParsingResult parseExpression(TokenIterator startToken)
 
 ParsingResult parseLogicalExpression(TokenIterator startToken)
 {
+    return parseLogicalExpression1(startToken);
+}
+
+ParsingResult parseLogicalExpression1(TokenIterator startToken)
+{
     return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
-        {makeBreaketParser("("), parseLogicalExpression, makeOperatorTokenParser("||"), parseLogicalExpression, makeBreaketParser(")")},
-        {makeBreaketParser("("), parseLogicalExpression, makeOperatorTokenParser("&&"), parseLogicalExpression, makeBreaketParser(")")},
+        {parseLogicalExpression2, makeOperatorTokenParser("||"), parseLogicalExpression1},
+        {parseLogicalExpression2, makeOperatorTokenParser("&&"), parseLogicalExpression1},
+        {parseLogicalExpression2},
+        {parseLogicalExpression3}
+    });    
+}
+
+ParsingResult parseLogicalExpression2(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseArithmeticExpression, makeOperatorTokenParser("=="), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser("<"), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser("<="), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser(">"), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser(">="), parseArithmeticExpression},
-        {makeBreaketParser("("), parseLogicalExpression, makeBreaketParser(")")},
+    });    
+}
+
+ParsingResult parseLogicalExpression3(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseFunctionCall},
         {parseIdentifier},
         {makeKeywordParser("true")},
-        {makeKeywordParser("false")}
+        {makeKeywordParser("false")},
+        {makeBreaketParser("("), parseLogicalExpression, makeBreaketParser(")")}
     });    
 }
 
 ParsingResult parseArithmeticExpression(TokenIterator startToken)
 {
+    return parseArithmeticExpression1(startToken);
+}
+
+ParsingResult parseArithmeticExpression1(TokenIterator startToken)
+{
     return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
-        {makeBreaketParser("("), parseArithmeticExpression, makeOperatorTokenParser("+"), parseArithmeticExpression, makeBreaketParser(")")},
-        {makeBreaketParser("("), parseArithmeticExpression, makeOperatorTokenParser("-"), parseArithmeticExpression, makeBreaketParser(")")},
-        {makeBreaketParser("("), makeOperatorTokenParser("-"), parseArithmeticExpression, makeBreaketParser(")")},
-        {makeBreaketParser("("), parseArithmeticExpression, makeOperatorTokenParser("*"), parseArithmeticExpression, makeBreaketParser(")")},
-        {makeBreaketParser("("), parseArithmeticExpression, makeOperatorTokenParser("/"), parseArithmeticExpression, makeBreaketParser(")")},
+        {parseArithmeticExpression2, makeOperatorTokenParser("+"), parseArithmeticExpression1},
+        {parseArithmeticExpression2, makeOperatorTokenParser("-"), parseArithmeticExpression1},
+        {makeOperatorTokenParser("-"), parseArithmeticExpression1},
+        {parseArithmeticExpression2},
+    });    
+}
+
+ParsingResult parseArithmeticExpression2(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
+        {parseArithmeticExpression3, makeOperatorTokenParser("*"), parseArithmeticExpression2},
+        {parseArithmeticExpression3, makeOperatorTokenParser("/"), parseArithmeticExpression2},
+        {parseArithmeticExpression3}
+    });    
+}
+
+ParsingResult parseArithmeticExpression3(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseFunctionCall},
         {parseIdentifier},
         {parseIntValue},
-        {parseFloatValue}
+        {parseFloatValue},
+        {makeBreaketParser("("), parseArithmeticExpression1, makeBreaketParser(")")}
     });    
 }
 
