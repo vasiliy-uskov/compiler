@@ -2,40 +2,39 @@
 #include <list>
 #include <functional>
 #include <optional>
-#include "../tokenizer/Token.h"
 #include "SyntaxTree.h"
+#include "TokenProvider.h"
 
-typedef std::pair<std::optional<SyntaxTree>, std::list<Token>::iterator> ParsingResult;
-typedef std::list<Token>::iterator TokenIterator;
-typedef std::function<ParsingResult(std::list<Token>::iterator)> ParseFn;
+typedef std::pair<std::optional<SyntaxTree>, TokenProvider> ParsingResult;
+typedef std::function<ParsingResult(TokenProvider)> ParseFn;
 
-ParsingResult parseProgramm(TokenIterator);
-ParsingResult parseFunctionsList(TokenIterator);
-ParsingResult parseFunction(TokenIterator);
-ParsingResult parseType(TokenIterator);
-ParsingResult parseDefinitionArgumentsList(TokenIterator);
-ParsingResult parseDefinitionArgument(TokenIterator);
-ParsingResult parseMainBody(TokenIterator);
-ParsingResult parseFunctionOperatorsList(TokenIterator);
-ParsingResult parseFunctionOperator(TokenIterator);
-ParsingResult parseFunctionIfOperator(TokenIterator);
-ParsingResult parseFunctionWhileOperator(TokenIterator);
-ParsingResult parseReturnOperator(TokenIterator);
-ParsingResult parseOperatorsList(TokenIterator);
-ParsingResult parseOperator(TokenIterator);
-ParsingResult parseIfOperator(TokenIterator);
-ParsingResult parseWhileOperator(TokenIterator);
-ParsingResult parseVariableDefinition(TokenIterator);
-ParsingResult parseAssignment(TokenIterator);
-ParsingResult parseFunctionCall(TokenIterator);
-ParsingResult parseCallArgumentsList(TokenIterator);
-ParsingResult parseCallArgument(TokenIterator);
-ParsingResult parseExpression(TokenIterator);
-ParsingResult parseExpression1(TokenIterator);
-ParsingResult parseExpression2(TokenIterator);
-ParsingResult parseIdentifier(TokenIterator);
-ParsingResult parseIntValue(TokenIterator);
-ParsingResult parseFloatValue(TokenIterator);
+ParsingResult parseProgramm(TokenProvider);
+ParsingResult parseFunctionsList(TokenProvider);
+ParsingResult parseFunction(TokenProvider);
+ParsingResult parseType(TokenProvider);
+ParsingResult parseDefinitionArgumentsList(TokenProvider);
+ParsingResult parseDefinitionArgument(TokenProvider);
+ParsingResult parseMainBody(TokenProvider);
+ParsingResult parseFunctionOperatorsList(TokenProvider);
+ParsingResult parseFunctionOperator(TokenProvider);
+ParsingResult parseFunctionIfOperator(TokenProvider);
+ParsingResult parseFunctionWhileOperator(TokenProvider);
+ParsingResult parseReturnOperator(TokenProvider);
+ParsingResult parseOperatorsList(TokenProvider);
+ParsingResult parseOperator(TokenProvider);
+ParsingResult parseIfOperator(TokenProvider);
+ParsingResult parseWhileOperator(TokenProvider);
+ParsingResult parseVariableDefinition(TokenProvider);
+ParsingResult parseAssignment(TokenProvider);
+ParsingResult parseFunctionCall(TokenProvider);
+ParsingResult parseCallArgumentsList(TokenProvider);
+ParsingResult parseCallArgument(TokenProvider);
+ParsingResult parseExpression(TokenProvider);
+ParsingResult parseExpression1(TokenProvider);
+ParsingResult parseExpression2(TokenProvider);
+ParsingResult parseIdentifier(TokenProvider);
+ParsingResult parseIntValue(TokenProvider);
+ParsingResult parseFloatValue(TokenProvider);
 
 ParseFn makeBreaketParser(const std::string&);
 ParseFn makePunctuationParser(const std::string&);

@@ -4,41 +4,40 @@
 #include <fstream>
 #include "../tokenizer/Tokenizer.h"
 
+void printLevelSpacies(std::ostream & os, size_t level)
+{
+    os << "|";
+    for (size_t i = 0; i < level; ++i)
+    {
+        os << " ";
+    }
+}
+
+void printTree(std::ostream & os, const SyntaxTree & tree, size_t level = 0)
+{
+    printLevelSpacies(os, level);
+    os << tree.rule << ": " << "\"";
+    for (auto token : tree.tokens)
+    {
+        os << token.value << " ";
+    }
+    os << "\"" << std::endl;
+    for (auto child : tree.children)
+    {
+        printTree(os, child, level + 1);
+    }
+}
+
 TEST(ParserParseCorrectly, Parser)
 { 
-    std::stringstream programm = std::stringstream(std::string()
-    + "int sum(int a, int b) {\n"
-    + "  return a + b;"
-    + "}\n"
-    + "void calculate(int a, int b) {\n"
-    + "  b = a + b;"
-    + "}\n"
-    + "main {\n"
-    + "  int a = 4;\n"
-    + "  int b = 3;\n"
-    + "  calculate(a, b);\n"
-    + "  b = sum(a, b) * 4;\n"
-    + "  if (a < b) {\n"
-    + "    calculate(a, b);\n"
-    + "  }\n"
-    + "  if ((a < b) && true || isCalculatable(a, b)) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  };\n"
-    + "  if (a < b) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "  else {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "  while (a < b) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "}\n");
-    auto tokens = Tokenizer::parse(programm);
-    auto tree = Parser::parse(tokens);
-    EXPECT_TRUE(true);
+    std::ifstream input;
+    std::ofstream output;
+    input.open("../tests/input1.txt", std::ios::in);
+    output.open("../tests/result1.txt", std::ios::out);
+    auto tokens = Tokenizer::parse(input);
+    auto result = Parser::parse(tokens);
+    
+    printTree(output, result);
+    input.close();
+    output.close();
 }

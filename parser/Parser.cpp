@@ -2,27 +2,27 @@
 #include "SyntaxTree.h"
 #include "Parser.h"
 
-ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & startToken, const std::list<ParseFn> & rules)
+ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenProvider & startProvider, const std::list<ParseFn> & rules)
 {
     std::vector<SyntaxTree> children = {};
-    TokenIterator currentToken = startToken;
+    TokenProvider currentProvider = startProvider;
     for (auto rule = rules.begin(); rule != rules.end(); rule++)
     {
-        auto [ruleResult, ruleEndToken] = (*rule)(currentToken);
+        auto [ruleResult, ruleEndProvider] = (*rule)(currentProvider);
         if (!ruleResult.has_value())
         {
-            return {std::nullopt, currentToken};
+            return {std::nullopt, currentProvider};
         }
         children.push_back(ruleResult.value());
-        currentToken = ruleEndToken;
+        currentProvider = ruleEndProvider;
     }
     return {
-        SyntaxTree(rule, {startToken, currentToken}, children),
-        currentToken
+        SyntaxTree(rule, {startProvider.getIt(), currentProvider.getIt()}, children),
+        currentProvider
     };
 }
 
-ParsingResult processSyntaxRule(SyntaxRule rule, const TokenIterator & startToken, const std::list<std::list<ParseFn>> & ruleVariants)
+ParsingResult processSyntaxRule(SyntaxRule rule, const TokenProvider & startToken, const std::list<std::list<ParseFn>> & ruleVariants)
 {
     for (auto ruleVariant : ruleVariants)
     {
@@ -35,24 +35,23 @@ ParsingResult processSyntaxRule(SyntaxRule rule, const TokenIterator & startToke
     return {std::nullopt, startToken};
 }
 
-ParsingResult parseToken(SyntaxRule rule, TokenIterator tokenIt, std::function<bool(const Token&)> matcher)
+ParsingResult parseToken(SyntaxRule rule, TokenProvider provider, std::function<bool(const Token&)> matcher)
 {
-    const auto token = *tokenIt;
-    const auto nextTokenIt = std::next(tokenIt, 1);
-    if (matcher(token))
+    if (!provider.isEnd() && matcher(provider.get()))
     {
+        const auto nextProvider = provider.next();
         return ParsingResult(
-            SyntaxTree(rule, {tokenIt, nextTokenIt}),
-            nextTokenIt
+            SyntaxTree(rule, {provider.getIt(), nextProvider.getIt()}),
+            nextProvider
         );
     }
-    return ParsingResult(std::nullopt, tokenIt);
+    return ParsingResult(std::nullopt, provider);
     
 }
 
 ParseFn makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue)
 {
-    return [rule, tokenValue](TokenIterator tokenIt) {
+    return [rule, tokenValue](TokenProvider tokenIt) {
         return parseToken(rule, tokenIt, [tokenValue](const Token & token) {
             return token.value == tokenValue;
         });
@@ -61,14 +60,14 @@ ParseFn makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue)
 
 ParseFn makeTokenParserByType(SyntaxRule rule, TokenType tokenType)
 {
-    return [rule, tokenType](TokenIterator tokenIt) {
+    return [rule, tokenType](TokenProvider tokenIt) {
         return parseToken(rule, tokenIt, [tokenType](const Token & token) {
             return token.type == tokenType;
         });
     };
 }
 
-ParsingResult parseProgramm(TokenIterator startToken)
+ParsingResult parseProgramm(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Program, startToken, {
         {parseFunctionsList, parseMainBody},
@@ -76,7 +75,7 @@ ParsingResult parseProgramm(TokenIterator startToken)
     });
 }
 
-ParsingResult parseFunctionsList(TokenIterator startToken)
+ParsingResult parseFunctionsList(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::FunctionsList, startToken, {
         {parseFunction, parseFunctionsList},
@@ -84,7 +83,7 @@ ParsingResult parseFunctionsList(TokenIterator startToken)
     });
 }
 
-ParsingResult parseFunction(TokenIterator startToken)
+ParsingResult parseFunction(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Function, startToken, {
         {
@@ -129,7 +128,7 @@ ParseFn makeOperatorTokenParser(const std::string & operatorTokenValue)
     return makeTokenParserByValue(SyntaxRule::Keyword, operatorTokenValue);
 }
 
-ParsingResult parseType(TokenIterator startToken)
+ParsingResult parseType(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Type, startToken, {
         {makeKeywordParser("int")},
@@ -138,23 +137,23 @@ ParsingResult parseType(TokenIterator startToken)
     });
 }
 
-ParsingResult parseIdentifier(TokenIterator startToken)
+ParsingResult parseIdentifier(TokenProvider startToken)
 {
     return makeTokenParserByType(SyntaxRule::Identifier, TokenType::Identifier)(startToken);
 }
 
-ParsingResult parseIntValue(TokenIterator startToken)
+ParsingResult parseIntValue(TokenProvider startToken)
 {
     return makeTokenParserByType(SyntaxRule::IntValue, TokenType::IntValue)(startToken);
 }
 
-ParsingResult parseFloatValue(TokenIterator startToken)
+ParsingResult parseFloatValue(TokenProvider startToken)
 {
     return makeTokenParserByType(SyntaxRule::FloatValue, TokenType::FloatValue)(startToken);
 }
 
 
-ParsingResult parseDefinitionArgumentsList(TokenIterator startToken)
+ParsingResult parseDefinitionArgumentsList(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::DefinitionArgumentsList, startToken, {
         {parseDefinitionArgument, makePunctuationParser(","), parseDefinitionArgumentsList},
@@ -162,14 +161,14 @@ ParsingResult parseDefinitionArgumentsList(TokenIterator startToken)
     });
 }
 
-ParsingResult parseDefinitionArgument(TokenIterator startToken)
+ParsingResult parseDefinitionArgument(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::DefinitionArgumentsList, startToken, {
         parseType, parseIdentifier
     });
 }
 
-ParsingResult parseMainBody(TokenIterator startToken)
+ParsingResult parseMainBody(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::MainBody, startToken, {
         {
@@ -186,7 +185,7 @@ ParsingResult parseMainBody(TokenIterator startToken)
     });
 }
 
-ParsingResult parseFunctionOperatorsList(TokenIterator startToken)
+ParsingResult parseFunctionOperatorsList(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::FunctionOperatorsList, startToken, {
         {parseFunctionOperator, parseFunctionOperatorsList},
@@ -194,7 +193,7 @@ ParsingResult parseFunctionOperatorsList(TokenIterator startToken)
     });
 }
 
-ParsingResult parseFunctionOperator(TokenIterator startToken)
+ParsingResult parseFunctionOperator(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::FunctionOperator, startToken, {
         {parseVariableDefinition, makePunctuationParser(";")},
@@ -207,7 +206,7 @@ ParsingResult parseFunctionOperator(TokenIterator startToken)
     });
 }
 
-ParsingResult parseFunctionIfOperator(TokenIterator startToken)
+ParsingResult parseFunctionIfOperator(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::OperatorIf, startToken, {
         {
@@ -236,7 +235,7 @@ ParsingResult parseFunctionIfOperator(TokenIterator startToken)
    
 }
 
-ParsingResult parseFunctionWhileOperator(TokenIterator startToken)
+ParsingResult parseFunctionWhileOperator(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::OperatorWhile, startToken, {
         makeKeywordParser("while"),
@@ -249,7 +248,7 @@ ParsingResult parseFunctionWhileOperator(TokenIterator startToken)
     });
 }
 
-ParsingResult parseReturnOperator(TokenIterator startToken)
+ParsingResult parseReturnOperator(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::OperatorReturn, startToken, {
         makeKeywordParser("return"),
@@ -257,7 +256,7 @@ ParsingResult parseReturnOperator(TokenIterator startToken)
     });
 }
 
-ParsingResult parseOperatorsList(TokenIterator startToken)
+ParsingResult parseOperatorsList(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::OperatorsList, startToken, {
         {parseOperator, parseOperatorsList},
@@ -265,7 +264,7 @@ ParsingResult parseOperatorsList(TokenIterator startToken)
     });
 }
 
-ParsingResult parseOperator(TokenIterator startToken)
+ParsingResult parseOperator(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Operator, startToken, {
         {parseVariableDefinition, makePunctuationParser(";")},
@@ -277,7 +276,7 @@ ParsingResult parseOperator(TokenIterator startToken)
     });
 }
 
-ParsingResult parseIfOperator(TokenIterator startToken)
+ParsingResult parseIfOperator(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::OperatorIf, startToken, {
         {
@@ -306,7 +305,7 @@ ParsingResult parseIfOperator(TokenIterator startToken)
    
 }
 
-ParsingResult parseWhileOperator(TokenIterator startToken)
+ParsingResult parseWhileOperator(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::OperatorWhile, startToken, {
         makeKeywordParser("while"),
@@ -319,7 +318,7 @@ ParsingResult parseWhileOperator(TokenIterator startToken)
     });
 }
 
-ParsingResult parseVariableDefinition(TokenIterator startToken)
+ParsingResult parseVariableDefinition(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::VariableDefinition, startToken, {
         {parseType, parseIdentifier, makeOperatorTokenParser("="), parseExpression},
@@ -327,21 +326,21 @@ ParsingResult parseVariableDefinition(TokenIterator startToken)
     });
 }
 
-ParsingResult parseAssignment(TokenIterator startToken)
+ParsingResult parseAssignment(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::AssignmentOperator, startToken, {
         parseIdentifier, makeOperatorTokenParser("="), parseExpression
     });
 }
 
-ParsingResult parseFunctionCall(TokenIterator startToken)
+ParsingResult parseFunctionCall(TokenProvider startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::AssignmentOperator, startToken, {
         parseIdentifier, makeBreaketParser("("), parseCallArgumentsList, makeBreaketParser(")")
     });
 }
 
-ParsingResult parseCallArgumentsList(TokenIterator startToken)
+ParsingResult parseCallArgumentsList(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::CallArgumentsList, startToken, {
         {parseExpression, makePunctuationParser(","), parseCallArgumentsList},
@@ -349,12 +348,12 @@ ParsingResult parseCallArgumentsList(TokenIterator startToken)
     });
 }
 
-ParsingResult parseExpression(TokenIterator startToken)
+ParsingResult parseExpression(TokenProvider startToken)
 {
     return parseExpression1(startToken);
 }
 
-ParsingResult parseExpression1(TokenIterator startToken)
+ParsingResult parseExpression1(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Expression, startToken, {
         {parseExpression2, makeOperatorTokenParser("||"), parseExpression1},
@@ -373,7 +372,7 @@ ParsingResult parseExpression1(TokenIterator startToken)
     });    
 }
 
-ParsingResult parseExpression2(TokenIterator startToken)
+ParsingResult parseExpression2(TokenProvider startToken)
 {
     return processSyntaxRule(SyntaxRule::Expression, startToken, {
         {makeKeywordParser("true")},
@@ -388,7 +387,8 @@ ParsingResult parseExpression2(TokenIterator startToken)
 
 SyntaxTree Parser::parse(std::list<Token> tokens)
 {
-    auto [result, endTokentIt] = parseProgramm(tokens.begin());
+    TokenProvider provider = {tokens.begin(), tokens.end()};
+    auto [result, endTokentIt] = parseProgramm(provider);
     if (result.has_value())
     {
         return result.value();
