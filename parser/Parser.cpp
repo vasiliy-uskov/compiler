@@ -381,13 +381,19 @@ ParsingResult parseLogicalExpression1(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseLogicalExpression2, makeOperatorTokenParser("||"), parseLogicalExpression1},
-        {parseLogicalExpression2, makeOperatorTokenParser("&&"), parseLogicalExpression1},
-        {parseLogicalExpression2},
-        {parseLogicalExpression3}
+        {parseLogicalExpression2}
     });    
 }
 
 ParsingResult parseLogicalExpression2(TokenIterator startToken)
+{
+    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
+        {parseLogicalExpression3, makeOperatorTokenParser("&&"), parseLogicalExpression2},
+        {parseLogicalExpression3},
+    });    
+}
+
+ParsingResult parseLogicalExpression3(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseArithmeticExpression, makeOperatorTokenParser("=="), parseArithmeticExpression},
@@ -395,17 +401,11 @@ ParsingResult parseLogicalExpression2(TokenIterator startToken)
         {parseArithmeticExpression, makeOperatorTokenParser("<="), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser(">"), parseArithmeticExpression},
         {parseArithmeticExpression, makeOperatorTokenParser(">="), parseArithmeticExpression},
-    });    
-}
-
-ParsingResult parseLogicalExpression3(TokenIterator startToken)
-{
-    return processSyntaxRule(SyntaxRule::ArithmeticExpression, startToken, {
         {parseFunctionCall},
         {parseIdentifier},
         {makeKeywordParser("true")},
         {makeKeywordParser("false")},
-        {makeBreaketParser("("), parseLogicalExpression, makeBreaketParser(")")}
+        {makeBreaketParser("("), parseLogicalExpression1, makeBreaketParser(")")}
     });    
 }
 

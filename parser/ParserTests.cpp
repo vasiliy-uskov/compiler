@@ -7,22 +7,6 @@
 TEST(ParserParseCorrectly, Parser)
 { 
     /*
-    + "  if (((a < b) && true) || isCalculatable(a, b))) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "  if (a < b) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "  else {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
-    + "  while (a < b) {\n"
-    + "    calculate(a, b);\n"
-    + "    b = (sum(a, b) * 4);\n"
-    + "  }\n"
     */
     std::stringstream programm = std::stringstream(std::string()
     + "int sum(int a, int b) {\n"
@@ -38,7 +22,23 @@ TEST(ParserParseCorrectly, Parser)
     + "  b = sum(a, b) * 4;\n"
     + "  if (a < b) {\n"
     + "    calculate(a, b);\n"
+    + "  };\n"
+    + "  if ((a < b) && true || isCalculatable(a, b)) {\n"
+    + "    calculate(a, b);\n"
+    + "    b = (sum(a, b) * 4);\n"
+    + "  };\n"
+    + "  if (a < b) {\n"
+    + "    calculate(a, b);\n"
+    + "    b = (sum(a, b) * 4);\n"
     + "  }\n"
+    + "  else {\n"
+    + "    calculate(a, b);\n"
+    + "    b = (sum(a, b) * 4);\n"
+    + "  };\n"
+    + "  while (a < b) {\n"
+    + "    calculate(a, b);\n"
+    + "    b = (sum(a, b) * 4);\n"
+    + "  };\n"
     + "}\n");
     auto tokens = Tokenizer::parse(programm);
     auto tree = Parser::parse(tokens);
