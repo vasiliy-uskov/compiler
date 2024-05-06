@@ -6,8 +6,6 @@
 
 TEST(ParserParseCorrectly, Parser)
 { 
-    /*
-    */
     std::stringstream programm = std::stringstream(std::string()
     + "int sum(int a, int b) {\n"
     + "  return a + b;"
@@ -22,7 +20,7 @@ TEST(ParserParseCorrectly, Parser)
     + "  b = sum(a, b) * 4;\n"
     + "  if (a < b) {\n"
     + "    calculate(a, b);\n"
-    + "  };\n"
+    + "  }\n"
     + "  if ((a < b) && true || isCalculatable(a, b)) {\n"
     + "    calculate(a, b);\n"
     + "    b = (sum(a, b) * 4);\n"
@@ -34,11 +32,11 @@ TEST(ParserParseCorrectly, Parser)
     + "  else {\n"
     + "    calculate(a, b);\n"
     + "    b = (sum(a, b) * 4);\n"
-    + "  };\n"
+    + "  }\n"
     + "  while (a < b) {\n"
     + "    calculate(a, b);\n"
     + "    b = (sum(a, b) * 4);\n"
-    + "  };\n"
+    + "  }\n"
     + "}\n");
     auto tokens = Tokenizer::parse(programm);
     auto tree = Parser::parse(tokens);

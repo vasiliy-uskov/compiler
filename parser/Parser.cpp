@@ -101,7 +101,6 @@ ParsingResult parseFunction(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseFunctionOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         }, {
             makeKeywordParser("void"),
@@ -111,7 +110,6 @@ ParsingResult parseFunction(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         },
     });
@@ -184,7 +182,6 @@ ParsingResult parseMainBody(TokenIterator startToken)
             makeKeywordParser("main"),
             makeBreaketParser("{"),
             parseOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         },
         {
@@ -198,7 +195,7 @@ ParsingResult parseMainBody(TokenIterator startToken)
 ParsingResult parseFunctionOperatorsList(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::FunctionOperatorsList, startToken, {
-        {parseFunctionOperator, makePunctuationParser(";"), parseFunctionOperatorsList},
+        {parseFunctionOperator, parseFunctionOperatorsList},
         {parseFunctionOperator}
     });
 }
@@ -206,12 +203,13 @@ ParsingResult parseFunctionOperatorsList(TokenIterator startToken)
 ParsingResult parseFunctionOperator(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::FunctionOperator, startToken, {
-        {parseVariableDefinition},
-        {parseAssignment},
-        {parseFunctionCall},
+        {parseVariableDefinition, makePunctuationParser(";")},
+        {parseAssignment, makePunctuationParser(";")},
+        {parseFunctionCall, makePunctuationParser(";")},
         {parseFunctionIfOperator},
         {parseFunctionWhileOperator},
-        {parseReturnOperator}
+        {parseReturnOperator, makePunctuationParser(";")},
+        {makePunctuationParser(";")}
     });
 }
 
@@ -225,12 +223,10 @@ ParsingResult parseFunctionIfOperator(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseFunctionOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}"),
             makeKeywordParser("else"),
             makeBreaketParser("{"),
             parseFunctionOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         },
         {
@@ -240,7 +236,6 @@ ParsingResult parseFunctionIfOperator(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseFunctionOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}"),
         }
     });
@@ -256,7 +251,6 @@ ParsingResult parseFunctionWhileOperator(TokenIterator startToken)
         makeBreaketParser(")"),
         makeBreaketParser("{"),
         parseFunctionOperatorsList,
-        makePunctuationParser(";"),
         makeBreaketParser("}")
     });
 }
@@ -265,14 +259,14 @@ ParsingResult parseReturnOperator(TokenIterator startToken)
 {
     return processSyntaxRuleVariant(SyntaxRule::OperatorReturn, startToken, {
         makeKeywordParser("return"),
-        parseExpression
+        parseExpression,
     });
 }
 
 ParsingResult parseOperatorsList(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::OperatorsList, startToken, {
-        {parseOperator, makePunctuationParser(";"), parseOperatorsList},
+        {parseOperator, parseOperatorsList},
         {parseOperator}
     });
 }
@@ -280,11 +274,12 @@ ParsingResult parseOperatorsList(TokenIterator startToken)
 ParsingResult parseOperator(TokenIterator startToken)
 {
     return processSyntaxRule(SyntaxRule::Operator, startToken, {
-        {parseVariableDefinition},
-        {parseAssignment},
-        {parseFunctionCall},
+        {parseVariableDefinition, makePunctuationParser(";")},
+        {parseAssignment, makePunctuationParser(";")},
+        {parseFunctionCall, makePunctuationParser(";")},
         {parseIfOperator},
-        {parseWhileOperator}
+        {parseWhileOperator},
+        {makePunctuationParser(";")}
     });
 }
 
@@ -298,12 +293,10 @@ ParsingResult parseIfOperator(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}"),
             makeKeywordParser("else"),
             makeBreaketParser("{"),
             parseOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         },
         {
@@ -313,7 +306,6 @@ ParsingResult parseIfOperator(TokenIterator startToken)
             makeBreaketParser(")"),
             makeBreaketParser("{"),
             parseOperatorsList,
-            makePunctuationParser(";"),
             makeBreaketParser("}")
         }
     });
@@ -329,7 +321,6 @@ ParsingResult parseWhileOperator(TokenIterator startToken)
         makeBreaketParser(")"),
         makeBreaketParser("{"),
         parseOperatorsList,
-        makePunctuationParser(";"),
         makeBreaketParser("}")
     });
 }
