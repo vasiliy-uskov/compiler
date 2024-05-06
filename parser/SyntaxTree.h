@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <list>
+#include <iostream>
 #include "../tokenizer/Token.h"
 
 enum SyntaxRule {
@@ -28,8 +29,6 @@ enum SyntaxRule {
     FunctionCall,
 
     Expression,
-    LogicalExpression,
-    ArithmeticExpression,
 
     Breaket,
     Punctuation,
@@ -50,3 +49,5 @@ public:
     SyntaxTree(SyntaxRule, const std::list<Token> &);
     SyntaxTree(SyntaxRule, const std::list<Token> &, const std::vector<SyntaxTree> &);
 };
+
+std::ostream& operator<<(std::ostream& os, const SyntaxRule type);

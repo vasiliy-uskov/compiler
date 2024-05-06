@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <string>
-#include <sstream>
 #include "Parser.h"
+#include <fstream>
 #include "../tokenizer/Tokenizer.h"
 
 TEST(ParserParseCorrectly, Parser)
