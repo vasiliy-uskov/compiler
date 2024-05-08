@@ -1,0 +1,10 @@
+int sum(int a, int b) {
+    return a + b;
+  }
+void calculate(int a, int b) {
+  b = a + b;
+main {
+  int a = 4;
+  int b = 3;
+  calculate(a, b);
+}

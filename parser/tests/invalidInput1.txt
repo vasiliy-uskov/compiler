@@ -1,0 +1,32 @@
+int sum(int a int b) {
+    return a + b;
+}
+void calculate(int a, int b) {
+  b = a + b;
+}
+main {
+  int a = 4;
+  int b = 3;
+  calculate(a, b);
+  b = sum(a, b) * 4;
+  b = a < b && true || re;
+  if (d) {
+    calculate(a, b);
+  }
+  if ((a < b) && true || isCalculatable(a, b)) {
+    calculate(a, b);
+    b = (sum(a, b) * 4);
+  };
+  if (a < b) {
+    calculate(a, b);
+    b = (sum(a, b) * 4);
+  }
+  else {
+    calculate(a, b);
+    b = (sum(a, b) * 4);
+  }
+  while (a < b) {
+    calculate(a, b);
+    b = (sum(a, b) * 4);
+  }
+}

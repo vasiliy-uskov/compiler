@@ -1,2 +1,2 @@
 build/*
-tests/result1.txt
+tests/result*.txt
