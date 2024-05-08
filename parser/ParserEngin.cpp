@@ -1,4 +1,3 @@
-#include <sstream>
 #include "ParserEngin.h"
 
 ParserEngin::ParserEngin(const TokenIterator & start, const TokenIterator & end)

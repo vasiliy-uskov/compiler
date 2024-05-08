@@ -2,6 +2,7 @@
 #include <list>
 #include <optional>
 #include <functional>
+#include <sstream>
 #include "../tokenizer/Token.h"
 #include "SyntaxTree.h"
 

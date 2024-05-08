@@ -20,6 +20,7 @@ add_executable(
   Parser.cpp
   SyntaxTree.cpp
   ParserEngin.cpp
+  Grammar.cpp
   ../tokenizer/Tokenizer.cpp
   ../tokenizer/Token.cpp
 )
