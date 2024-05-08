@@ -57,23 +57,26 @@ bool Token::isKeyword(const std::string & keyword)
 
 std::ostream& operator<<(std::ostream& os, const TokenType type)
 {
+    return os << fromTokenTypeToString(type);
+}
+
+std::string fromTokenTypeToString(TokenType type)
+{
     switch(type)
     {
         case TokenType::Identifier:
-            return os << std::string("Identifier");
+            return "Identifier";
         case TokenType::Keyword:
-            return os << std::string("Keyword");
+            return "Keyword";
         case TokenType::IntValue:
-            return os << std::string("IntValue");
+            return "IntValue";
         case TokenType::FloatValue:
-            return os << std::string("FloatValue");
+            return "FloatValue";
         case TokenType::Punctuation:
-            return os << std::string("Punctuation");
+            return "Punctuation";
         case TokenType::Breaket:
-            return os << std::string("Breaket");
+            return "Breaket";
         case TokenType::Operator:
-            return os << std::string("Operator");
-    }
-
-    return os;
+            return "Operator";
+    }   
 }

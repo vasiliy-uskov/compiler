@@ -3,43 +3,40 @@
 #include <functional>
 #include <optional>
 #include "SyntaxTree.h"
-#include "TokenProvider.h"
+#include "ParserEngin.h"
 
-typedef std::pair<std::optional<SyntaxTree>, TokenProvider> ParsingResult;
-typedef std::function<ParsingResult(TokenProvider)> ParseFn;
+ParsingResult parseProgramm(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionsList(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunction(ParserEngin&, const TokenIterator&);
+ParsingResult parseType(ParserEngin&, const TokenIterator&);
+ParsingResult parseDefinitionArgumentsList(ParserEngin&, const TokenIterator&);
+ParsingResult parseDefinitionArgument(ParserEngin&, const TokenIterator&);
+ParsingResult parseMainBody(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionOperatorsList(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionIfOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionWhileOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseReturnOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseOperatorsList(ParserEngin&, const TokenIterator&);
+ParsingResult parseOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseIfOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseWhileOperator(ParserEngin&, const TokenIterator&);
+ParsingResult parseVariableDefinition(ParserEngin&, const TokenIterator&);
+ParsingResult parseAssignment(ParserEngin&, const TokenIterator&);
+ParsingResult parseFunctionCall(ParserEngin&, const TokenIterator&);
+ParsingResult parseCallArgumentsList(ParserEngin&, const TokenIterator&);
+ParsingResult parseCallArgument(ParserEngin&, const TokenIterator&);
+ParsingResult parseExpression(ParserEngin&, const TokenIterator&);
+ParsingResult parseExpression1(ParserEngin&, const TokenIterator&);
+ParsingResult parseExpression2(ParserEngin&, const TokenIterator&);
+ParsingResult parseIdentifier(ParserEngin&, const TokenIterator&);
+ParsingResult parseIntValue(ParserEngin&, const TokenIterator&);
+ParsingResult parseFloatValue(ParserEngin&, const TokenIterator&);
 
-ParsingResult parseProgramm(const TokenProvider&);
-ParsingResult parseFunctionsList(const TokenProvider&);
-ParsingResult parseFunction(const TokenProvider&);
-ParsingResult parseType(const TokenProvider&);
-ParsingResult parseDefinitionArgumentsList(const TokenProvider&);
-ParsingResult parseDefinitionArgument(const TokenProvider&);
-ParsingResult parseMainBody(const TokenProvider&);
-ParsingResult parseFunctionOperatorsList(const TokenProvider&);
-ParsingResult parseFunctionOperator(const TokenProvider&);
-ParsingResult parseFunctionIfOperator(const TokenProvider&);
-ParsingResult parseFunctionWhileOperator(const TokenProvider&);
-ParsingResult parseReturnOperator(const TokenProvider&);
-ParsingResult parseOperatorsList(const TokenProvider&);
-ParsingResult parseOperator(const TokenProvider&);
-ParsingResult parseIfOperator(const TokenProvider&);
-ParsingResult parseWhileOperator(const TokenProvider&);
-ParsingResult parseVariableDefinition(const TokenProvider&);
-ParsingResult parseAssignment(const TokenProvider&);
-ParsingResult parseFunctionCall(const TokenProvider&);
-ParsingResult parseCallArgumentsList(const TokenProvider&);
-ParsingResult parseCallArgument(const TokenProvider&);
-ParsingResult parseExpression(const TokenProvider&);
-ParsingResult parseExpression1(const TokenProvider&);
-ParsingResult parseExpression2(const TokenProvider&);
-ParsingResult parseIdentifier(const TokenProvider&);
-ParsingResult parseIntValue(const TokenProvider&);
-ParsingResult parseFloatValue(const TokenProvider&);
-
-ParseFn makeBreaketParser(const std::string&);
-ParseFn makePunctuationParser(const std::string&);
-ParseFn makeKeywordParser(const std::string&);
-ParseFn makeOperatorTokenParser(const std::string&);
+ParseFn makeBreaketParser(ParserEngin&, const std::string&);
+ParseFn makePunctuationParser(ParserEngin&, const std::string&);
+ParseFn makeKeywordParser(ParserEngin&, const std::string&);
+ParseFn makeOperatorTokenParser(ParserEngin&, std::string&);
 
 class Parser
 {
