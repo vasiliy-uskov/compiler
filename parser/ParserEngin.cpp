@@ -1,12 +1,22 @@
 #include <sstream>
 #include "ParserEngin.h"
 
-ParserEngin::ParserEngin(const TokenIterator & start, const TokenIterator & end)
+template <class T>
+SyntaxTree<T>::SyntaxTree(T rule, const std::list<Token> & tokens)
+        : rule(rule), tokens(tokens), children({}) {}
+
+template <class T>
+SyntaxTree<T>::SyntaxTree(T rule, const std::list<Token> & tokens, const std::vector<SyntaxTree<T>> & _children)
+        : rule(rule), tokens(tokens), children(_children) {}
+
+template <class T>
+ParserEngin<T>::ParserEngin(const TokenIterator & start, const TokenIterator & end)
     : max(start), end(end) {}
 
-ParsingResult ParserEngin::processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & startIt, const std::list<ParseFn> & rules)
+template <class T>
+ParsingResult<T> ParserEngin<T>::processSyntaxRuleVariant(T rule, const TokenIterator & startIt, const std::list<ParseFn<T>> & rules)
 {
-    std::vector<SyntaxTree> children = {};
+    std::vector<SyntaxTree<T>> children = {};
     TokenIterator currentIt = startIt;
     for (auto rule : rules)
     {
@@ -24,7 +34,8 @@ ParsingResult ParserEngin::processSyntaxRuleVariant(SyntaxRule rule, const Token
     };
 }
 
-ParsingResult ParserEngin::processSyntaxRule(SyntaxRule rule, const TokenIterator & startIt, const std::list<std::list<ParseFn>> & ruleVariants)
+template <class T>
+ParsingResult<T> ParserEngin<T>::processSyntaxRule(T rule, const TokenIterator & startIt, const std::list<std::list<ParseFn<T>>> & ruleVariants)
 {
     auto errorTokenIt = startIt; 
     for (auto ruleVariant : ruleVariants)
@@ -42,7 +53,8 @@ ParsingResult ParserEngin::processSyntaxRule(SyntaxRule rule, const TokenIterato
     return {std::nullopt, errorTokenIt};
 }
 
-ParsingResult ParserEngin::parseToken(SyntaxRule rule, const TokenIterator & startIt, const std::string & expectedToken, std::function<bool(const Token&)> matcher)
+template <class T>
+ParsingResult<T> ParserEngin<T>::parseToken(T rule, const TokenIterator & startIt, const std::string & expectedToken, std::function<bool(const Token&)> matcher)
 {
     if (tokenItLess(max, startIt))
     {
@@ -64,7 +76,8 @@ ParsingResult ParserEngin::parseToken(SyntaxRule rule, const TokenIterator & sta
     return ParsingResult(std::nullopt, startIt);
 }
 
-bool ParserEngin::tokenItLess(const TokenIterator & a, const TokenIterator & b)
+template <class T>
+bool ParserEngin<T>::tokenItLess(const TokenIterator & a, const TokenIterator & b)
 {
     int aDistance = std::distance(a, end);
     int bDistance = std::distance(b, end);
@@ -72,7 +85,8 @@ bool ParserEngin::tokenItLess(const TokenIterator & a, const TokenIterator & b)
 
 }
 
-ParseFn ParserEngin::makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue)
+template <class T>
+ParseFn<T> ParserEngin<T>::makeTokenParserByValue(T rule, const std::string & tokenValue)
 {
     return [rule, tokenValue](ParserEngin & engin, const TokenIterator & tokenIt) {
         return engin.parseToken(rule, tokenIt, tokenValue, [tokenValue](const Token & token) {
@@ -81,7 +95,8 @@ ParseFn ParserEngin::makeTokenParserByValue(SyntaxRule rule, const std::string &
     };
 }
 
-ParseFn ParserEngin::makeTokenParserByType(SyntaxRule rule, TokenType tokenType)
+template <class T>
+ParseFn<T> ParserEngin<T>::makeTokenParserByType(T rule, TokenType tokenType)
 {
     return [rule, tokenType](ParserEngin & engin, const TokenIterator & tokenIt) {
         return engin.parseToken(rule, tokenIt, fromTokenTypeToString(tokenType), [tokenType](const Token & token) {
@@ -90,7 +105,8 @@ ParseFn ParserEngin::makeTokenParserByType(SyntaxRule rule, TokenType tokenType)
     };
 }
 
-UnexpectedTokenException ParserEngin::getUnexpectedTokenException()
+template <class T>
+UnexpectedTokenException ParserEngin<T>::getUnexpectedTokenException()
 {
     return UnexpectedTokenException(expectedTokenOnMaxPosition, *max);
 }

@@ -2,13 +2,30 @@
 #include <list>
 #include <optional>
 #include <functional>
+#include <vector>
 #include "../tokenizer/Token.h"
-#include "SyntaxTree.h"
 
-class ParserEngin;
+template <class T>
+class SyntaxTree
+{
+public:
+    const std::vector<SyntaxTree> children;
+    const std::list<Token> tokens;
+    const T rule;
+
+    SyntaxTree(T, const std::list<Token> &);
+    SyntaxTree(T, const std::list<Token> &, const std::vector<SyntaxTree<T>> &);
+};
+
 typedef std::list<Token>::iterator TokenIterator;
-typedef std::pair<std::optional<SyntaxTree>, TokenIterator> ParsingResult;
-typedef std::function<ParsingResult(ParserEngin&, const TokenIterator&)> ParseFn;
+
+template <class T>
+class ParsingResult : public std::pair<std::optional<SyntaxTree<T>>, TokenIterator> {};
+
+template <class T> class ParserEngin;
+
+template <class T>
+class ParseFn : public std::function<ParsingResult<T>(ParserEngin<T>, const TokenIterator)> {};
 
 class UnexpectedTokenException : public std::exception
 {
@@ -20,6 +37,7 @@ public:
     const char* what() const noexcept override;
 };
 
+template <class T>
 class ParserEngin
 {
 private:
@@ -28,14 +46,14 @@ private:
     const TokenIterator end;
 
     bool tokenItLess(const TokenIterator & a, const TokenIterator & b);
-    ParsingResult processSyntaxRuleVariant(SyntaxRule rule, const TokenIterator & startProvider, const std::list<ParseFn> & rules);
-    ParsingResult parseToken(SyntaxRule rule, const TokenIterator & provider, const std::string&, std::function<bool(const Token&)> matcher);
+    ParsingResult<T> processSyntaxRuleVariant(T rule, const TokenIterator & startProvider, const std::list<ParseFn<T>> & rules);
+    ParsingResult<T> parseToken(T rule, const TokenIterator & provider, const std::string&, std::function<bool(const Token&)> matcher);
 
 public:
     ParserEngin(const TokenIterator & start, const TokenIterator & end);
 
     UnexpectedTokenException getUnexpectedTokenException();
-    ParsingResult processSyntaxRule(SyntaxRule rule, const TokenIterator & provider, const std::list<std::list<ParseFn>> & ruleVariants);    
-    ParseFn makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue);
-    ParseFn makeTokenParserByType(SyntaxRule rule, TokenType tokenType);
+    ParsingResult<T> processSyntaxRule(T rule, const TokenIterator & provider, const std::list<std::list<ParseFn<T>>> & ruleVariants);    
+    ParseFn<T> makeTokenParserByValue(T rule, const std::string & tokenValue);
+    ParseFn<T> makeTokenParserByType(T rule, TokenType tokenType);
 };

@@ -18,7 +18,7 @@ add_executable(
   parser_tests
   ParserTests.cpp
   Parser.cpp
-  SyntaxTree.cpp
+  Grammar.cpp
   ParserEngin.cpp
   ../tokenizer/Tokenizer.cpp
   ../tokenizer/Token.cpp

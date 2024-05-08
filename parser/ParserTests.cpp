@@ -13,7 +13,7 @@ void printLevelSpacies(std::ostream & os, size_t level)
     }
 }
 
-void printTree(std::ostream & os, const SyntaxTree & tree, size_t level = 0)
+void printTree(std::ostream & os, const SyntaxTree<SyntaxRule> & tree, size_t level = 0)
 {
     printLevelSpacies(os, level);
     os << tree.rule << ": " << "\"";
