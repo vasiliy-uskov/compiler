@@ -32,7 +32,9 @@ ParsingResult processSyntaxRule(SyntaxRule rule, const TokenProvider & provider,
         {
             return result;
         }
-        if (0 < std::distance(errorTokenProvider.getIt(), result.second.getIt()))
+        int resultDistance = std::distance(provider.getIt(), result.second.getIt());
+        int errorDistance = std::distance(provider.getIt(), errorTokenProvider.getIt());
+        if (errorDistance < resultDistance)
         {
             errorTokenProvider = result.second;
         }
