@@ -6,6 +6,13 @@ SyntaxTree::SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens)
 SyntaxTree::SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens, const std::vector<SyntaxTree> & _children)
         : rule(rule), tokens(tokens), children(_children) {}
 
+
+SyntaxTree & SyntaxTree::operator=(const SyntaxTree & tree)
+{
+    auto newTree = SyntaxTree(tree.rule, tree.tokens, tree.children);
+    return newTree;
+}
+
 std::ostream& operator<<(std::ostream& os, const SyntaxRule type)
 {
     switch(type)

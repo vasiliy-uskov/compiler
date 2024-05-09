@@ -48,6 +48,8 @@ public:
 
     SyntaxTree(SyntaxRule, const std::list<Token> &);
     SyntaxTree(SyntaxRule, const std::list<Token> &, const std::vector<SyntaxTree> &);
+
+    SyntaxTree & operator=(const SyntaxTree & tree);
 };
 
 std::ostream& operator<<(std::ostream& os, const SyntaxRule type);

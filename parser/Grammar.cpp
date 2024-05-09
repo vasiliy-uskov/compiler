@@ -268,7 +268,7 @@ ParsingResult parseAssignment(ParserEngin & engin, const TokenIterator & it)
 
 ParsingResult parseFunctionCall(ParserEngin & engin, const TokenIterator & it)
 {
-    return engin.processSyntaxRule(SyntaxRule::AssignmentOperator, it, {
+    return engin.processSyntaxRule(SyntaxRule::FunctionCall, it, {
         {parseIdentifier, makeBreaketParser(engin, "("), parseCallArgumentsList, makeBreaketParser(engin, ")")}
     });
 }
