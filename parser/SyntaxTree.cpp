@@ -9,7 +9,7 @@ SyntaxTree::SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens, const s
 
 SyntaxTree & SyntaxTree::operator=(const SyntaxTree & tree)
 {
-    auto newTree = SyntaxTree(tree.rule, tree.tokens, tree.children);
+    SyntaxTree newTree(tree.rule, tree.tokens, {tree.children.begin(), tree.children.end()});
     return newTree;
 }
 
@@ -72,4 +72,17 @@ std::ostream& operator<<(std::ostream& os, const SyntaxRule type)
     }
 
     return os;
+}
+
+bool isListRule(SyntaxRule rule) {
+    return rule == SyntaxRule::FunctionsList
+        || rule == SyntaxRule::DefinitionArgumentsList
+        || rule == SyntaxRule::CallArgumentsList
+        || rule == SyntaxRule::FunctionOperatorsList
+        || rule == SyntaxRule::OperatorsList;
+}
+
+bool isOperatorRule(SyntaxRule rule) {
+    return rule == SyntaxRule::FunctionOperator
+        || rule == SyntaxRule::Operator;
 }

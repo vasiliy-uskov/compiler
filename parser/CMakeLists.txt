@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(helloworld VERSION 0.1.0 LANGUAGES C CXX)
+project(Parser VERSION 0.1.0)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -14,20 +14,30 @@ FetchContent_MakeAvailable(googletest)
 
 enable_testing()
 
-add_executable(
-  parser_tests
-  ParserTests.cpp
+add_library(
+  parser
   Parser.cpp
   SyntaxTree.cpp
   ParserEngin.cpp
   Grammar.cpp
+  JSLikeVectorAdapter.h
   ../tokenizer/Tokenizer.cpp
   ../tokenizer/Token.cpp
+)
+
+add_executable(
+  parser_tests
+  ParserTests.cpp
 )
 
 target_link_libraries(
   parser_tests
   GTest::gtest_main
+)
+
+target_link_libraries(
+  parser_tests
+  parser
 )
 
 include(GoogleTest)

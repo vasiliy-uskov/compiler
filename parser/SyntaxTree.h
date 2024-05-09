@@ -53,3 +53,5 @@ public:
 };
 
 std::ostream& operator<<(std::ostream& os, const SyntaxRule type);
+bool isListRule(SyntaxRule rule);
+bool isOperatorRule(SyntaxRule rule);

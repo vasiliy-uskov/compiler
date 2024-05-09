@@ -3,14 +3,11 @@
 #include <functional>
 #include <optional>
 #include <algorithm>
-#include "SyntaxTree.h"
-#include "ParserEngin.h"
+#include "JSLikeVectorAdapter.h"
 #include "Grammar.h"
 
 class Parser
 {
-private:
-    static SyntaxTree deleteExtraNodes(SyntaxTree&);
 public:
     static SyntaxTree parse(std::list<Token>);
 };

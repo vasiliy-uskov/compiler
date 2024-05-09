@@ -56,8 +56,10 @@ TEST(ParserParseCorrectly, Parser)
 
     input.open("../tests/input.txt", std::ios::in);
     realOutput.open("../tests/result.txt", std::ios::out);
+
     auto tokens = Tokenizer::parse(input);
-    auto result = Parser::parse(tokens);    
+    auto result = Parser::parse(tokens);
+
     printTree(realOutput, result);
     input.close();
     realOutput.close();

@@ -96,7 +96,7 @@ ParsingResult parseDefinitionArgumentsList(ParserEngin & engin, const TokenItera
 
 ParsingResult parseDefinitionArgument(ParserEngin & engin, const TokenIterator & it)
 {
-    return engin.processSyntaxRule(SyntaxRule::DefinitionArgumentsList, it, {
+    return engin.processSyntaxRule(SyntaxRule::DefinitionArgument, it, {
         {parseType, parseIdentifier}
     });
 }
