@@ -19,7 +19,7 @@ void checkTokenizerParseCorrect(const std::string & inputString, std::list<Token
 
 TEST(TokenizerParseCorrectly, RandomTokens)
 {
-    checkTokenizerParseCorrect("main equal //asfddf 132. 14\n 13.1 41 4 1. 915{} (f1, b2, ddd3);\n", {
+    checkTokenizerParseCorrect("main equal //asfddf 132. 14\n 13.1 41 4 1. 915{} (f1, b2, ddd3);\n! != \n", {
          Token(TokenType::Keyword, "main", {0, 5}),
          Token(TokenType::Identifier, "equal", {0, 11}),
          Token(TokenType::FloatValue, "13.1", {1, 6}),
@@ -36,7 +36,9 @@ TEST(TokenizerParseCorrectly, RandomTokens)
          Token(TokenType::Punctuation, ",", {1, 29}),
          Token(TokenType::Identifier, "ddd3", {1, 34}),
          Token(TokenType::Breaket, ")", {1, 35}),
-         Token(TokenType::Punctuation, ";", {1, 36})
+         Token(TokenType::Punctuation, ";", {1, 36}),
+         Token(TokenType::Operator, "!", {2, 2}),
+         Token(TokenType::Operator, "!=", {2, 5})
     });
 }
 

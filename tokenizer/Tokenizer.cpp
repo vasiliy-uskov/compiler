@@ -250,7 +250,8 @@ std::list<Token> Tokenizer::parse(std::istream & input)
             || ch == '&'
             || ch == '='
             || ch == '<'
-            || ch == '>')
+            || ch == '>'
+            || ch == '!')
         {
             processOperatorCh(tokens, parserState, tokenValue, ch, { line, chPosition });
         }

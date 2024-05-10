@@ -39,5 +39,5 @@ struct Token
     static bool isKeyword(const std::string & keyword);
 };
 
-std::ostream& operator<<(std::ostream& os, const TokenType & type);
+std::ostream& operator<<(std::ostream& os, TokenType type);
 std::string fromTokenTypeToString(TokenType);

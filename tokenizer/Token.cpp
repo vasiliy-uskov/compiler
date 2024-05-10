@@ -15,8 +15,8 @@ const char* UnknownOperatorExeption::what() const noexcept
     return std::string(message.str()).c_str();
 }
 
-const std::array<std::string, 12> definedOperators = {
-    "||", "&&", "==", ">=", "<=", "<", ">", "*", "/", "+", "-", "="
+const std::array<std::string, 14> definedOperators = {
+    "||", "&&", "==", ">=", "<=", "<", ">", "*", "/", "+", "-", "=", "!", "!="
 };
 
 const std::array<std::string, 11> definedKeywords = {
