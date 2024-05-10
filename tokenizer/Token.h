@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <exception>
+#include <array>
+#include <sstream>
+#include <algorithm>
 
 struct TokenPosition
 {

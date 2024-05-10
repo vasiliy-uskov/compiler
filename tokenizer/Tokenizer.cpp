@@ -1,8 +1,3 @@
-#pragma once
-#include <iostream>
-#include <list>
-#include <string>
-#include <sstream>
 #include "Tokenizer.h"
 
 enum TokenizerState

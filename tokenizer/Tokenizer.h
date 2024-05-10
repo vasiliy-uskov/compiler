@@ -1,6 +1,8 @@
 #pragma once
 #include <list>
 #include <iostream>
+#include <string>
+#include <sstream>
 #include "Token.h"
 
 class UnexpectedSymbolExeption: public std::exception

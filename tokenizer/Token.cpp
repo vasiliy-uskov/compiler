@@ -1,8 +1,3 @@
-#pragma once
-#include <string>
-#include <array>
-#include <sstream>
-#include <algorithm>
 #include "Token.h"
 
 UnknownOperatorExeption::UnknownOperatorExeption(const std::string & op, const TokenPosition & position)
@@ -79,4 +74,5 @@ std::string fromTokenTypeToString(TokenType type)
         case TokenType::Operator:
             return "Operator";
     }   
+    throw std::exception();
 }
