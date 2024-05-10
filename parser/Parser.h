@@ -3,8 +3,9 @@
 #include <functional>
 #include <optional>
 #include <algorithm>
-#include "JSLikeVectorAdapter.h"
-#include "Grammar.h"
+#include <map>
+#include "./utils/JSLikeVectorAdapter.h"
+#include "./grammar/Grammar.h"
 
 class Parser
 {

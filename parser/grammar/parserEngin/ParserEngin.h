@@ -3,8 +3,8 @@
 #include <optional>
 #include <functional>
 #include <sstream>
-#include "../tokenizer/Token.h"
-#include "SyntaxTree.h"
+#include "../../../tokenizer/Token.h"
+#include "syntaxTree/SyntaxTree.h"
 
 class ParserEngin;
 typedef std::list<Token>::iterator TokenIterator;

@@ -2,7 +2,7 @@
 #include <vector>
 #include <list>
 #include <iostream>
-#include "../tokenizer/Token.h"
+#include "../../../../tokenizer/Token.h"
 
 enum SyntaxRule {
     Program,
