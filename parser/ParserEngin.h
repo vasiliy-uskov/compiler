@@ -38,5 +38,6 @@ public:
     UnexpectedTokenException getUnexpectedTokenException();
     ParsingResult processSyntaxRule(SyntaxRule rule, const TokenIterator & provider, const std::list<std::list<ParseFn>> & ruleVariants);    
     ParseFn makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue);
+    ParseFn makeTokenParserByValue(SyntaxRule rule, const std::list<std::string> & values);
     ParseFn makeTokenParserByType(SyntaxRule rule, TokenType tokenType);
 };

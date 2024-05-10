@@ -13,7 +13,7 @@ main {
   if (d) {
     calculate(a, b);
   }
-  if ((a < b) && true || isCalculatable(a, b)) {
+  if (!(a < b) && true || isCalculatable(a, b)) {
     calculate(a, b);
     b = (sum(a, b) * 4);
   };

@@ -71,6 +71,17 @@ bool ParserEngin::tokenItLess(const TokenIterator & a, const TokenIterator & b)
 
 }
 
+ParseFn ParserEngin::makeTokenParserByValue(SyntaxRule rule, const std::list<std::string> & values)
+{
+    return [rule, values](ParserEngin & engin, const TokenIterator & tokenIt) {
+        return engin.parseToken(rule, tokenIt, *values.begin(), [values](const Token & token) {
+            return std::any_of(values.begin(), values.end(), [token](auto variant) {
+                return token.value == variant;
+            });
+        });
+    };
+}
+
 ParseFn ParserEngin::makeTokenParserByValue(SyntaxRule rule, const std::string & tokenValue)
 {
     return [rule, tokenValue](ParserEngin & engin, const TokenIterator & tokenIt) {

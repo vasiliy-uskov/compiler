@@ -56,9 +56,9 @@ ParseFn makeKeywordParser(ParserEngin & engin, const std::string & keyword)
     return engin.makeTokenParserByValue(SyntaxRule::Keyword, keyword);
 }
 
-ParseFn makeOperatorTokenParser(ParserEngin & engin, const std::string & operatorTokenValue)
+ParseFn makeOperatorTokenParser(ParserEngin & engin, const std::list<std::string> & values)
 {
-    return engin.makeTokenParserByValue(SyntaxRule::Keyword, operatorTokenValue);
+    return engin.makeTokenParserByValue(SyntaxRule::Keyword, values);
 }
 
 ParsingResult parseType(ParserEngin & engin, const TokenIterator & it)
@@ -254,7 +254,7 @@ ParsingResult parseWhileOperator(ParserEngin & engin, const TokenIterator & it)
 ParsingResult parseVariableDefinition(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::VariableDefinition, it, {
-        {parseType, parseIdentifier, makeOperatorTokenParser(engin, "="), parseExpression},
+        {parseType, parseIdentifier, makeOperatorTokenParser(engin, {"="}), parseExpression},
         {parseType, parseIdentifier}
     });
 }
@@ -262,7 +262,7 @@ ParsingResult parseVariableDefinition(ParserEngin & engin, const TokenIterator &
 ParsingResult parseAssignment(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::AssignmentOperator, it, {
-        {parseIdentifier, makeOperatorTokenParser(engin, "="), parseExpression}
+        {parseIdentifier, makeOperatorTokenParser(engin, {"="}), parseExpression}
     });
 }
 
@@ -289,23 +289,36 @@ ParsingResult parseExpression(ParserEngin & engin, const TokenIterator & it)
 ParsingResult parseExpression1(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::Expression, it, {
-        {parseExpression2, makeOperatorTokenParser(engin, "||"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "+"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "-"), parseExpression1},
-        {makeOperatorTokenParser(engin, "-"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "&&"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "*"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "/"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "=="), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "<"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, "<="), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, ">"), parseExpression1},
-        {parseExpression2, makeOperatorTokenParser(engin, ">="), parseExpression1},
+        {parseExpression2, makeOperatorTokenParser(engin, {"+", "-", "||"}), parseExpression1},
         {parseExpression2}
     });    
 }
 
 ParsingResult parseExpression2(ParserEngin & engin, const TokenIterator & it)
+{
+    return engin.processSyntaxRule(SyntaxRule::Expression, it, {
+        {parseExpression3, makeOperatorTokenParser(engin, {"*", "/", "&&"}), parseExpression2},
+        {parseExpression3}
+    });    
+}
+
+ParsingResult parseExpression3(ParserEngin & engin, const TokenIterator & it)
+{
+    return engin.processSyntaxRule(SyntaxRule::Expression, it, {
+        {parseExpression4, makeOperatorTokenParser(engin, {"<", "<=", ">=", "==", "!="}), parseExpression3},
+        {parseExpression4}
+    });    
+}
+
+ParsingResult parseExpression4(ParserEngin & engin, const TokenIterator & it)
+{
+    return engin.processSyntaxRule(SyntaxRule::Expression, it, {
+        {makeOperatorTokenParser(engin, {"-", "!"}), parseExpression5},
+        {parseExpression5}
+    });  
+}
+
+ParsingResult parseExpression5(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::Expression, it, {
         {makeKeywordParser(engin, "true")},
