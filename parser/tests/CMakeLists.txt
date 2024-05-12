@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.14)
-project(Parser VERSION 0.1.0)
+project(ParserTests VERSION 0.1.0)
 
 include(FetchContent)
 FetchContent_Declare(
@@ -9,20 +9,23 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
-enable_testing()
-add_subdirectory(../)
-
 add_executable(
-  parser_tests
+  ParserTests
   ParserTests.cpp
-  ../tokenizer/Tokenizer.cpp
+  ../../tokenizer/Tokenizer.cpp
+)
+
+add_dependencies(
+  ParserTests
+  Parser
+  Grammar
 )
 
 target_link_libraries(
-  parser_tests
+  ParserTests
+  Parser
   GTest::gtest_main
-  parser
 )
 
 include(GoogleTest)
-gtest_discover_tests(parser_tests)
+gtest_discover_tests(ParserTests)

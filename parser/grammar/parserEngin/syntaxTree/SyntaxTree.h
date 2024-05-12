@@ -4,7 +4,7 @@
 #include <iostream>
 #include "../../../../tokenizer/Token.h"
 
-enum SyntaxRule {
+enum class SyntaxRule {
     Program,
     MainBody,
 
@@ -43,11 +43,11 @@ class SyntaxTree
 {
 public:
     const std::vector<SyntaxTree> children;
-    const std::list<Token> tokens;
+    const std::vector<Token> tokens;
     const SyntaxRule rule;
 
-    SyntaxTree(SyntaxRule, const std::list<Token> &);
-    SyntaxTree(SyntaxRule, const std::list<Token> &, const std::vector<SyntaxTree> &);
+    SyntaxTree(SyntaxRule, const std::vector<Token> &);
+    SyntaxTree(SyntaxRule, const std::vector<Token> &, const std::vector<SyntaxTree> &);
 
     SyntaxTree & operator=(const SyntaxTree & tree);
 };

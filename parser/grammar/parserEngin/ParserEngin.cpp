@@ -113,8 +113,8 @@ const char* UnexpectedTokenException::what() const noexcept
     std::ostringstream message;
     message
         << "Unexpected token"
-        << "(" << realToken.position.line << "," <<  realToken.position.end - 1 << "): "
-        << realToken.value
+        << " (" << realToken.position.line << "," <<  realToken.position.end - realToken.value.size() << "):"
+        << " \"" << realToken.value << "\""
         << " expect "
         << expectedToken;
     return std::string(message.str()).c_str();

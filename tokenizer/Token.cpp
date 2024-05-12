@@ -50,6 +50,12 @@ bool Token::isKeyword(const std::string & keyword)
     return inArr(definedKeywords, keyword);
 }
 
+
+std::ostream& operator<<(std::ostream& os, TokenPosition position)
+{
+    return os << "(" << position.line << "," <<  position.end << ")";   
+}
+
 std::ostream& operator<<(std::ostream& os, const TokenType type)
 {
     return os << fromTokenTypeToString(type);

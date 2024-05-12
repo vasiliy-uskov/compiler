@@ -1,9 +1,9 @@
 #include "SyntaxTree.h"
 
 
-SyntaxTree::SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens)
+SyntaxTree::SyntaxTree(SyntaxRule rule, const std::vector<Token> & tokens)
         : rule(rule), tokens(tokens), children({}) {}
-SyntaxTree::SyntaxTree(SyntaxRule rule, const std::list<Token> & tokens, const std::vector<SyntaxTree> & _children)
+SyntaxTree::SyntaxTree(SyntaxRule rule, const std::vector<Token> & tokens, const std::vector<SyntaxTree> & _children)
         : rule(rule), tokens(tokens), children(_children) {}
 
 

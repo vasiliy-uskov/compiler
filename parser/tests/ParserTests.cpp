@@ -1,8 +1,10 @@
 #include <gtest/gtest.h>
 #include <string>
-#include "Parser.h"
 #include <fstream>
-#include "../tokenizer/Tokenizer.h"
+#include "../Parser.h"
+#include "../../tokenizer/Tokenizer.h"
+
+const std::string TESTS_PATH = "../../tests/";
 
 void printLevelSpacies(std::ostream & os, size_t level)
 {
@@ -54,8 +56,8 @@ TEST(ParserParseCorrectly, Parser)
     std::fstream input;
     std::fstream realOutput;
 
-    input.open("../tests/input.txt", std::ios::in);
-    realOutput.open("../tests/result.txt", std::ios::out);
+    input.open(TESTS_PATH + "input.txt", std::ios::in);
+    realOutput.open(TESTS_PATH + "result.txt", std::ios::out);
 
     auto tokens = Tokenizer::parse(input);
     auto result = Parser::parse(tokens);
@@ -64,16 +66,16 @@ TEST(ParserParseCorrectly, Parser)
     input.close();
     realOutput.close();
 
-    EXPECT_TRUE(compareFiles("../tests/result.txt", "../tests/output.txt"));
+    EXPECT_TRUE(compareFiles(TESTS_PATH + "result.txt",  TESTS_PATH + "output.txt"));
 }
 
 TEST(ParserParseInvalidInput, Parser)
 { 
     std::ifstream input;
     std::list<std::string> inputFiles = {
-        "../tests/InvalidInput1.txt",
-        "../tests/InvalidInput2.txt",
-        "../tests/InvalidInput3.txt"
+        TESTS_PATH + "invalidInput1.txt",
+        TESTS_PATH + "invalidInput2.txt",
+        TESTS_PATH + "invalidInput3.txt"
     };
     for (auto inputFile : inputFiles)
     {

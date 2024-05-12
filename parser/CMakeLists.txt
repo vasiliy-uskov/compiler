@@ -5,15 +5,16 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 add_subdirectory(grammar)
+add_subdirectory(tests)
 
 add_library(
-  parser
+  Parser
   Parser.cpp
   ./utils/JSLikeVectorAdapter.h
   ../tokenizer/Token.cpp
 )
 
 target_link_libraries(
-  parser
-  grammar
+  Parser
+  Grammar
 )

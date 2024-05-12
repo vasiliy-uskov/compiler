@@ -43,4 +43,5 @@ struct Token
 };
 
 std::ostream& operator<<(std::ostream& os, TokenType type);
+std::ostream& operator<<(std::ostream& os, TokenPosition position);
 std::string fromTokenTypeToString(TokenType);
