@@ -5,5 +5,5 @@
 
 TEST(GeneratorTest, Generator)
 {
-    
+    EXPECT_TRUE(true);
 }
