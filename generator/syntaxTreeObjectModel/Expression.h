@@ -1,19 +1,26 @@
 #pragma once
 #include <functional>
+#include <memory>
 #include "common.h"
 
-struct IScopeStorage
+struct IExpression : public INode
 {
-    virtual std::string getFunctionReturnType(const std::string & identifier) const;
-    virtual std::string getVariableType(const std::string & identifier) const;
+    virtual SyntaxTree getNode() const;
+    virtual std::string getType() const;
 };
 
-struct IExpression
+struct BaseExpression : public IExpression
 {
-    virtual std::string getType(const IScopeStorage&) const;
+protected:
+    const SyntaxTree node;
+    std::shared_ptr<IdentifiersScope> scope = nullptr;
+public:
+    BaseExpression(const SyntaxTree & node);
+    TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
+    SyntaxTree getNode() const override;
 };
 
-struct RowValue : public IExpression
+struct RowValue : public BaseExpression
 {
 private:
     const std::string type;
@@ -21,43 +28,48 @@ private:
     static std::string getRowValueType(const SyntaxTree & node);
 public:
     RowValue(const SyntaxTree & node);
-    std::string getType(const IScopeStorage & storage) const override;
+    std::string getType() const override;
+    TypeCheckErrors checkTypes() const override;
 };
 
-struct Variable : public IExpression
+struct Variable : public BaseExpression
 {
     const std::string identifier;
 
     Variable(const SyntaxTree & node);
-    std::string getType(const IScopeStorage & storage) const override;
+    std::string getType() const override;
+    TypeCheckErrors checkTypes() const override;
 };
 
-struct FunctionCall : public IExpression
+struct FunctionCall : public BaseExpression
 {
     const std::string identifier;
     const std::vector<IExpression> arguments;
 
     explicit FunctionCall(const SyntaxTree & node);
-    std::string getType(const IScopeStorage & storage) const override;
+    std::string getType() const override;
+    TypeCheckErrors checkTypes() const override;
 };
 
-struct UnaryOperandExpression : IExpression
+struct UnaryOperandExpression : public BaseExpression
 {
     const std::string sign;
     const IExpression operand;
 
     UnaryOperandExpression(const SyntaxTree & node);
-    std::string getType(const IScopeStorage & storage) const override;
+    std::string getType() const override;
+    TypeCheckErrors checkTypes() const override;
 };
 
-struct BinaryOperandExpression : public IExpression
+struct BinaryOperandExpression : public BaseExpression
 {
     const std::string sign;
     const IExpression operand1;
     const IExpression operand2;
 
     BinaryOperandExpression(const SyntaxTree & node);
-    std::string getType(const IScopeStorage & storage) const override;
+    std::string getType() const override;
+    TypeCheckErrors checkTypes() const override;
 };
 
 IExpression createExpression(const SyntaxTree & node);

@@ -1,7 +1,7 @@
 #include "IdentifiersScope.h"
 
-IdentifiersScope::IdentifiersScope(IdentifiersScope & parentScope) noexcept
-    :parentScope(std::optional<IdentifiersScope>(parentScope)), functions({}), variables({}) {}
+IdentifiersScope::IdentifiersScope(const std::shared_ptr<IdentifiersScope> & parentScope) noexcept
+    :parentScope(std::shared_ptr<IdentifiersScope>(parentScope)), functions({}), variables({}) {}
 
 
 template <typename T>
@@ -9,7 +9,7 @@ void add(std::map<std::string, T> & map, const std::string & identifier, const T
 {
     if (map.count(identifier))
     {
-        throw DublicateDefinitionException();
+        throw IdentifiersScope::DublicateException();
     }
     map.insert({identifier, type});
 }
@@ -31,7 +31,7 @@ FunctionSignature IdentifiersScope::getFunctionSignature(const std::string & ide
     }
     catch (std::out_of_range&)
     {
-        if (parentScope.has_value())
+        if (parentScope)
         {
             return parentScope->getFunctionSignature(identifier);
         }
@@ -46,7 +46,7 @@ std::string IdentifiersScope::getVariableType(const std::string & identifier) co
     }
     catch (std::out_of_range &)
     {
-        if (parentScope.has_value())
+        if (parentScope)
         {
             return parentScope->getVariableType(identifier);
         }

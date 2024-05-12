@@ -8,6 +8,8 @@ add_library(
   Operator.cpp 
   FunctionDefinition.cpp
   Expression.cpp
+  TypeCheckErrors.cpp
   common.h
+  identifiersScope/IdentifiersScope.cpp
   ../../parser/grammar/parserEngin/syntaxTree/SyntaxTree.cpp
 )
