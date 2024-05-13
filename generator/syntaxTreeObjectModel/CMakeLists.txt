@@ -6,6 +6,8 @@ add_library(
   SHARED STATIC
   Programm.cpp 
   FunctionDefinition.cpp
+  common.h
+  TypeCheckErrors.cpp
   ./expression/BaseExpression.cpp
   ./expression/BinaryOperandExpression.cpp
   ./expression/ExpressionFactory.cpp
@@ -19,8 +21,6 @@ add_library(
   ./operator/OperatorReturn.cpp
   ./operator/AssignmentOperator.cpp
   ./operator/VariableDefinitionOperator.cpp
-  TypeCheckErrors.cpp
-  common.h
   identifiersScope/IdentifiersScope.cpp
   ../../parser/grammar/parserEngin/syntaxTree/SyntaxTree.cpp
 )
