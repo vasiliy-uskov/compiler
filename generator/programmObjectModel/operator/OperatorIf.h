@@ -2,7 +2,6 @@
 #include <vector>
 #include <optional>
 #include <memory>
-#include "common.h"
 #include "../expression/ExpressionFactory.h"
 #include "OperatorFactory.h"
 #include "IOperator.h"
