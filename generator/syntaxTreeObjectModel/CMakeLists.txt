@@ -5,9 +5,20 @@ add_library(
   SyntaxTreeObjectModel
   SHARED STATIC
   Programm.cpp 
-  Operator.cpp 
   FunctionDefinition.cpp
-  Expression.cpp
+  ./expression/BaseExpression.cpp
+  ./expression/BinaryOperandExpression.cpp
+  ./expression/ExpressionFactory.cpp
+  ./expression/FunctionCall.cpp
+  ./expression/RowValue.cpp
+  ./expression/UnaryOperandExpression.cpp
+  ./expression/Variable.cpp
+  ./operator/OperatorFactory.h
+  ./operator/OperatorIf.h
+  ./operator/OperatorWhile.h
+  ./operator/OperatorReturn.h
+  ./operator/AssignmentOperator.h
+  ./operator/VariableDefinitionOperator.h
   TypeCheckErrors.cpp
   common.h
   identifiersScope/IdentifiersScope.cpp

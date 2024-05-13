@@ -6,9 +6,9 @@ Programm::Programm(const SyntaxTree & node)
             return FunctionDefinition(node);
         }))
         : std::nullopt),
-    operators(buildList<IOperator>(
-        node.children[node.children.size() == 2 ? 1 : 0].children[0],
-        creaetOperator)) {}
+    operators(OperatorFactory::createList(node.children.size() == 2
+        ? node.children[1].children[0]
+        : node.children[1].children[0])) {}
 
         
 TypeCheckErrors Programm::checkTypes()

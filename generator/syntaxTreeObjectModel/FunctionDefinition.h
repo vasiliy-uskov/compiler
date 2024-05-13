@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include "common.h"
-#include "Operator.h"
+#include "operator/OperatorFactory.h"
 
 struct FunctionDefinitionArgument
 {

@@ -7,12 +7,12 @@ FunctionDefinitionArgument::FunctionDefinitionArgument(const SyntaxTree & argume
 
 FunctionDefinition::FunctionDefinition(const SyntaxTree & functionNode)
     : node(functionNode), 
-    returnType(getTokenValue(functionNode.children[0])),
-    identifier(getTokenValue(functionNode.children[1])),
-    arguments(buildList<FunctionDefinitionArgument>(functionNode.children[2], [](auto node) {
+    returnType(getTokenValue(node.children[0])),
+    identifier(getTokenValue(node.children[1])),
+    arguments(buildList<FunctionDefinitionArgument>(node.children[2], [](auto node) {
         return FunctionDefinitionArgument(node);
     })),
-    operatorsList(buildList<IOperator>(functionNode.children[3], creaetOperator)) {}
+    operatorsList(OperatorFactory::createFunctionOperatorsList(returnType, node.children[3])) {}
 
 TypeCheckErrors FunctionDefinition::checkTypes() const
 {

@@ -3,10 +3,9 @@
 #include <optional>
 #include <memory>
 #include "common.h"
-#include "Operator.h"
-#include "Operator.h"
 #include "FunctionDefinition.h"
 #include "identifiersScope/IdentifiersScope.h"
+#include "operator/OperatorFactory.h"
 
 struct Programm
 {
