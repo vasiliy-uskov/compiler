@@ -13,12 +13,12 @@ add_library(
   ./expression/RowValue.cpp
   ./expression/UnaryOperandExpression.cpp
   ./expression/Variable.cpp
-  ./operator/OperatorFactory.h
-  ./operator/OperatorIf.h
-  ./operator/OperatorWhile.h
-  ./operator/OperatorReturn.h
-  ./operator/AssignmentOperator.h
-  ./operator/VariableDefinitionOperator.h
+  ./operator/OperatorFactory.cpp
+  ./operator/OperatorIf.cpp
+  ./operator/OperatorWhile.cpp
+  ./operator/OperatorReturn.cpp
+  ./operator/AssignmentOperator.cpp
+  ./operator/VariableDefinitionOperator.cpp
   TypeCheckErrors.cpp
   common.h
   identifiersScope/IdentifiersScope.cpp
