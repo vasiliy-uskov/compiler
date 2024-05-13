@@ -19,7 +19,7 @@ public:
     JSLikeVectorAdapter(const std::vector<T> & collection)
         : collection(collection) {}
 
-    JSLikeVectorAdapter & reduce(const std::function<bool(const T&)> & predicate)
+    JSLikeVectorAdapter & filter(const std::function<bool(const T&)> & predicate)
     {
         std::vector<T> newCollection;
         for (auto item : collection)
@@ -33,7 +33,7 @@ public:
         return *this;
     }
 
-    JSLikeVectorAdapter & reduceIf(bool execute, const std::function<bool(const T&)> & predicate)
+    JSLikeVectorAdapter & filterIf(bool execute, const std::function<bool(const T&)> & predicate)
     {
         return execute ? reduce(predicate) : *this;
     }

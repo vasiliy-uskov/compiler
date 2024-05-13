@@ -15,13 +15,6 @@ enum TokenizerState
 
 UnexpectedSymbolExeption::UnexpectedSymbolExeption(char symbol, const TokenPosition & position)
     : _symbol(symbol), _position(position) {}
-    
-const char* UnexpectedSymbolExeption::what() const noexcept
-{
-    std::ostringstream message;
-    message << "Unexpected symbol(" << _position.line << "," <<  _position.end - 1 << "): " << _symbol;
-    return std::string(message.str()).c_str();
-}
 
 void processAlphabitCh(std::list<Token> & tokens, TokenizerState & parserState, std::string & tokenValue, char ch, const TokenPosition & position) 
 {

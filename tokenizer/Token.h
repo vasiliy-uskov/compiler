@@ -1,6 +1,5 @@
 #pragma once
 #include <string>
-#include <exception>
 #include <array>
 #include <sstream>
 #include <algorithm>
@@ -11,14 +10,13 @@ struct TokenPosition
     const size_t end;
 };
 
-class UnknownOperatorExeption: public std::exception
+class UnknownOperatorExeption
 {
 private:
     const std::string _operator;
     const TokenPosition _position;
 public:
     UnknownOperatorExeption(const std::string & op, const TokenPosition & position);
-    const char* what() const noexcept override;
 };
 
 enum class TokenType

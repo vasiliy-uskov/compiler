@@ -107,15 +107,3 @@ UnexpectedTokenException ParserEngin::getUnexpectedTokenException()
 
 UnexpectedTokenException::UnexpectedTokenException(const std::string & expectedToken, const Token & realToken)
     : expectedToken(expectedToken), realToken(realToken) {}
-    
-const char* UnexpectedTokenException::what() const noexcept
-{
-    std::ostringstream message;
-    message
-        << "Unexpected token"
-        << " (" << realToken.position.line << "," <<  realToken.position.end - realToken.value.size() << "):"
-        << " \"" << realToken.value << "\""
-        << " expect "
-        << expectedToken;
-    return std::string(message.str()).c_str();
-}

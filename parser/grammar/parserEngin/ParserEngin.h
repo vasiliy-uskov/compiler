@@ -11,14 +11,13 @@ typedef std::list<Token>::iterator TokenIterator;
 typedef std::pair<std::optional<SyntaxTree>, TokenIterator> ParsingResult;
 typedef std::function<ParsingResult(ParserEngin&, const TokenIterator&)> ParseFn;
 
-class UnexpectedTokenException : public std::exception
+class UnexpectedTokenException
 {
 private:
     const std::string expectedToken;
     const Token realToken;
 public:
     UnexpectedTokenException(const std::string & expectedToken, const Token & realToken);
-    const char* what() const noexcept override;
 };
 
 class ParserEngin

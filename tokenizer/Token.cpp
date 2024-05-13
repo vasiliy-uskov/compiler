@@ -2,13 +2,6 @@
 
 UnknownOperatorExeption::UnknownOperatorExeption(const std::string & op, const TokenPosition & position)
     : _operator(op), _position(position) {}
-    
-const char* UnknownOperatorExeption::what() const noexcept
-{
-    std::ostringstream message;
-    message << "Unknown symbol(" << _position.line << "," <<  _position.end - _operator.size() << "): " << _operator;
-    return std::string(message.str()).c_str();
-}
 
 const std::array<std::string, 14> definedOperators = {
     "||", "&&", "==", ">=", "<=", "<", ">", "*", "/", "+", "-", "=", "!", "!="

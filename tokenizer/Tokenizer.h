@@ -5,14 +5,13 @@
 #include <sstream>
 #include "Token.h"
 
-class UnexpectedSymbolExeption: public std::exception
+class UnexpectedSymbolExeption
 {
 private:
     const char _symbol;
     const TokenPosition _position;
 public:
     UnexpectedSymbolExeption(char symbol, const TokenPosition & position);
-    const char* what() const noexcept override;
 };
 
 class Tokenizer
