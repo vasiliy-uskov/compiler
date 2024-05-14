@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
 #include <string>
 #include <fstream>
+#include "variables.h"
 #include "../Parser.h"
 #include "../../tokenizer/Tokenizer.h"
 
-const std::string TESTS_PATH = "../../tests/";
+
+const std::string TESTS_PATH = TESTS_DIR;
 
 void printLevelSpacies(std::ostream & os, size_t level)
 {
@@ -53,6 +55,7 @@ bool compareFiles(const std::string& p1, const std::string& p2) {
 
 TEST(ParserParseCorrectly, Parser)
 { 
+    std::cout << TESTS_PATH << std::endl;
     std::fstream input;
     std::fstream realOutput;
 

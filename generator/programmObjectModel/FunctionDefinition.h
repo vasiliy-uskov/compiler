@@ -1,6 +1,7 @@
 #pragma once
 #include <memory>
-#include "common.h"
+#include "INode.h"
+#include "buildList.h"
 #include "operator/OperatorFactory.h"
 
 struct FunctionDefinitionArgument

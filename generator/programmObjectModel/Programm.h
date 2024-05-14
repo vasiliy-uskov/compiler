@@ -2,7 +2,8 @@
 #include <vector>
 #include <optional>
 #include <memory>
-#include "common.h"
+#include "INode.h"
+#include "buildList.h"
 #include "FunctionDefinition.h"
 #include "identifiersScope/IdentifiersScope.h"
 #include "operator/OperatorFactory.h"

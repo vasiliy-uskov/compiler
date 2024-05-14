@@ -1,6 +1,8 @@
 #pragma once
-#include <map>
+#include "programmObjectModel/Programm.h"
 
 class Generator
 {
+public:
+    static void generate(const SyntaxTree & tree);
 };

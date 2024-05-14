@@ -7,12 +7,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_subdirectory(programmObjectModel)
 add_subdirectory(tests)
 
-add_library(
-  Generator
-  Generator.cpp
-)
+add_library(Generator STATIC Generator.cpp)
 
 target_link_libraries(
   Generator
-  SyntaxTreeObjectModel
+  ProgrammObjectModel
 )

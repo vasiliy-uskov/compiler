@@ -9,10 +9,12 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+set(TESTS_DIR ${PROJECT_SOURCE_DIR})
+configure_file(variables.h.in variables.h @ONLY)
+
 add_executable(
   ParserTests
   ParserTests.cpp
-  ../../tokenizer/Tokenizer.cpp
 )
 
 add_dependencies(
@@ -26,6 +28,9 @@ target_link_libraries(
   Parser
   GTest::gtest_main
 )
+
+target_include_directories(ParserTests PRIVATE ${PROJECT_BINARY_DIR})
+target_link_libraries(ParserTests ${PROJECT_SOURCE_DIR}/../../tokenizer/build/libTokenizer.a)
 
 include(GoogleTest)
 gtest_discover_tests(ParserTests)

@@ -2,7 +2,8 @@
 #include <vector>
 #include <optional>
 #include <memory>
-#include "../common.h"
+#include "../INode.h"
+#include "../buildList.h"
 #include "../expression/ExpressionFactory.h"
 #include "../expression/FunctionCall.h"
 

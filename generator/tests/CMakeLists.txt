@@ -16,8 +16,8 @@ add_executable(
 
 add_dependencies(
   GeneratorTests
+  ProgrammObjectModel
   Generator
-  SyntaxTreeObjectModel
 )
 
 target_link_libraries(

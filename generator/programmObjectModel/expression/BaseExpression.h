@@ -2,12 +2,13 @@
 #include <functional>
 #include <memory>
 #include "../../../parser/grammar/parserEngin/syntaxTree/SyntaxTree.h"
-#include "../common.h"
+#include "../INode.h"
+#include "../buildList.h"
 
 struct IExpression : public INode
 {
-    virtual SyntaxTree getNode() const;
-    virtual std::string getType() const;
+    virtual SyntaxTree getNode() const { throw 0; }
+    virtual std::string getType() const { throw 0; }
 };
 
 struct BaseExpression : public IExpression

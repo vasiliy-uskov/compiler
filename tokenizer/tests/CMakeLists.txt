@@ -15,10 +15,6 @@ add_executable(
   TokenizerTests.cpp
 )
 
-add_dependencies(
-  TokenizerTests
-  Tokenizer
-)
 target_link_libraries(
   TokenizerTests
   Tokenizer

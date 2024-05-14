@@ -7,7 +7,7 @@ void calculate(int a, int b) {
 main {
   int a = 4;
   int b = 3;
-  calculate(a calc, b);
+  calculate(a, b);
   b = sum(a, b) * 4 + 1;
   b = a < b && true || re;
   if (d) {

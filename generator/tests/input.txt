@@ -1,0 +1,14 @@
+int sum(int a, int b) {
+    return a + b;
+}
+
+void calculate(int a, int b) {
+    a = a + b;
+}
+
+main {
+    int a = 1;
+    int b = 2;
+    int c = sum(a, b) + sum(a, b);
+    c = a + b;
+}
