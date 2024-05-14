@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 #include <iostream>
 #include <list>
-#include "Tokenizer.h"
+#include "../Tokenizer.h"
 
 void checkTokenizerParseCorrect(const std::string & inputString, std::list<Token> acceptableResult)
 {
