@@ -7,20 +7,27 @@ FunctionDefinitionArgument::FunctionDefinitionArgument(const SyntaxTree & argume
 
 FunctionDefinition::FunctionDefinition(const SyntaxTree & functionNode)
     : node(functionNode), 
-    returnType(getTokenValue(node.children[0])),
-    identifier(getTokenValue(node.children[1])),
-    arguments(buildList<FunctionDefinitionArgument>(node.children[2], [](auto node) {
-        return FunctionDefinitionArgument(node);
-    })),
-    operatorsList(OperatorFactory::createFunctionOperatorsList(returnType, node.children[3])) {}
+    returnType(getTokenValue(functionNode.children[0])),
+    identifier(getTokenValue(functionNode.children[1])),
+    arguments(functionNode.children[2].rule == SyntaxRule::DefinitionArgumentsList
+        ? buildList<FunctionDefinitionArgument>(functionNode.children[2], [](auto node) {
+            return FunctionDefinitionArgument(node);
+        })
+        : std::vector<FunctionDefinitionArgument>({})),
+    operatorsList(OperatorFactory::createFunctionOperatorsList(
+        getTokenValue(functionNode.children[0]),
+        functionNode.children[2].rule == SyntaxRule::DefinitionArgumentsList 
+            ? functionNode.children[3]
+            : functionNode.children[2]
+    )) {}
 
 TypeCheckErrors FunctionDefinition::checkTypes() const
 {
     TypeCheckErrors errors;
     
-    for (const IOperator & node : operatorsList)
+    for (const IOperator::OperatorPtr & functionNode : operatorsList)
     {
-        errors.add(node.checkTypes());
+        errors.add(functionNode->checkTypes());
     };
 
     return errors;
@@ -31,6 +38,7 @@ TypeCheckErrors FunctionDefinition::initIdentifiersScope(const std::shared_ptr<I
     scope = std::make_shared<IdentifiersScope>(parentScope);
     TypeCheckErrors errors;
     std::vector<std::string> argumentsTypes;
+
 
     for (const FunctionDefinitionArgument & argument : arguments)
     {
@@ -45,18 +53,18 @@ TypeCheckErrors FunctionDefinition::initIdentifiersScope(const std::shared_ptr<I
         }
     }
 
-    for (IOperator & oper : operatorsList)
-    {
-        errors.add(oper.initIdentifiersScope(scope));
-    }
-
     try
     {
-        scope->addFunction(identifier, {returnType, argumentsTypes});
+        parentScope->addFunction(identifier, {returnType, argumentsTypes});
     }
     catch (IdentifiersScope::DublicateException & e)
     {
         errors.add(TypeCheckErrors({DublicateDeclorationException(node)}));
+    }
+
+    for (IOperator::OperatorPtr & oper : operatorsList)
+    {
+        errors.add(oper->initIdentifiersScope(scope));
     }
     return errors;
 }

@@ -7,9 +7,8 @@
 #include "../expression/ExpressionFactory.h"
 #include "../expression/FunctionCall.h"
 
-struct IOperator : public INode {};
-
-struct FunctionCallOperator : public FunctionCall, public IOperator
+struct IOperator : public INode
 {
-    using FunctionCall::FunctionCall;
+    typedef std::shared_ptr<IOperator> OperatorPtr;
+    virtual ~IOperator() {};
 };

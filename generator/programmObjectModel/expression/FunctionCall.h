@@ -4,9 +4,10 @@
 struct FunctionCall : public BaseExpression
 {
     const std::string identifier;
-    const std::vector<IExpression> arguments;
+    const std::vector<IExpression::ExpressionPtr> arguments;
 
-    explicit FunctionCall(const SyntaxTree & node);
+    FunctionCall(const SyntaxTree & node);
     std::string getType() const override;
     TypeCheckErrors checkTypes() const override;
+    TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
 };

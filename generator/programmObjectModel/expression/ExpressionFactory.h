@@ -4,6 +4,6 @@
 
 struct ExpressionFactory
 {
-    static IExpression create(const SyntaxTree & node);
-    static std::vector<IExpression> createList(const SyntaxTree & list);
+    static IExpression::ExpressionPtr create(const SyntaxTree & node);
+    static std::vector<IExpression::ExpressionPtr> createList(const SyntaxTree & list);
 };

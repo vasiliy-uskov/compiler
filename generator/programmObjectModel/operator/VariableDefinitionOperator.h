@@ -10,9 +10,10 @@ private:
 public:
     const std::string type;
     const std::string identifier;
-    const std::optional<IExpression> expression;
+    const IExpression::ExpressionPtr expression;
 
+    ~VariableDefinitionOperator() {}
     VariableDefinitionOperator(const SyntaxTree & node);
-    TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
-    TypeCheckErrors checkTypes() const override;
+    virtual TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
+    virtual TypeCheckErrors checkTypes() const override;
 };

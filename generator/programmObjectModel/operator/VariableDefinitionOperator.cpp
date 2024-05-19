@@ -5,13 +5,14 @@ VariableDefinitionOperator::VariableDefinitionOperator(const SyntaxTree & node)
     type(getTokenValue(node.children[0])),
     identifier(getTokenValue(node.children[1])),
     expression(node.children.size() > 2
-        ? std::optional(ExpressionFactory::create(node.children[3]))
-        : std::nullopt) {}
+        ? ExpressionFactory::create(node.children[3])
+        : nullptr) {}
 
 TypeCheckErrors VariableDefinitionOperator::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & _scope)
 {
     scope = _scope;
     TypeCheckErrors errors;
+    errors.add(expression->initIdentifiersScope(_scope));
     try
     {
         scope->addVariable(identifier, type);
@@ -26,14 +27,15 @@ TypeCheckErrors VariableDefinitionOperator::initIdentifiersScope(const std::shar
 TypeCheckErrors VariableDefinitionOperator::checkTypes() const
 {
     TypeCheckErrors errors;
-    if (expression.has_value())
+    if (expression != nullptr)
     {
         try
         {
-            auto realType = expression.value().getType();
-            if (realType != type)
+            auto realType = expression->getType();
+            if (realType != type
+            && !(type == "flaot" && realType == "int"))
             {   
-                errors.add(InvalidTypeException(expression.value().getNode(), realType, type));
+                errors.add(InvalidTypeException(expression->getNode(), realType, type));
             }
         }
         catch (TypeCheckErrors e)

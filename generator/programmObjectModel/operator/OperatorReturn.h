@@ -9,7 +9,7 @@ private:
     const std::string expectedReturnType;
     std::shared_ptr<IdentifiersScope> scope = nullptr;
 public:
-    const IExpression expression;
+    const IExpression::ExpressionPtr expression;
 
     OperatorReturn(const std::string & returnType, const SyntaxTree & node);
     TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;

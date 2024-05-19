@@ -4,8 +4,8 @@
 
 struct OperatorFactory
 {
-    static IOperator create(const SyntaxTree & node);
-    static std::vector<IOperator> createList(const SyntaxTree & node);
-    static IOperator createFunctionOperator(const std::string & functionReturnType, const SyntaxTree & node);
-    static std::vector<IOperator> createFunctionOperatorsList(const std::string & functionReturnType, const SyntaxTree & node);
+    static IOperator::OperatorPtr create(const SyntaxTree & node);
+    static std::vector<IOperator::OperatorPtr> createList(const SyntaxTree & node);
+    static IOperator::OperatorPtr createFunctionOperator(const std::string & functionReturnType, const SyntaxTree & node);
+    static std::vector<IOperator::OperatorPtr> createFunctionOperatorsList(const std::string & functionReturnType, const SyntaxTree & node);
 };

@@ -8,10 +8,9 @@ struct AssignmentOperator : public IOperator
 private:
     const SyntaxTree node;
     std::shared_ptr<IdentifiersScope> scope = nullptr;
+    Variable variable;
+    IExpression::ExpressionPtr expression;
 public:
-    const Variable variable;
-    const IExpression expression;
-
     AssignmentOperator(const SyntaxTree & node);
     TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
     TypeCheckErrors checkTypes() const override;

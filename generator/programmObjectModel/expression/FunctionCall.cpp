@@ -3,7 +3,20 @@
 FunctionCall::FunctionCall(const SyntaxTree & node)
     : BaseExpression(node),
     identifier(getTokenValue(node.children[0])),
-    arguments(ExpressionFactory::createList(node.children[1])) {}
+    arguments(node.children.size() == 2
+        ? ExpressionFactory::createList(node.children[1])
+        : std::vector<IExpression::ExpressionPtr>({})) {}
+
+    
+TypeCheckErrors FunctionCall::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope)
+{
+    auto errors = BaseExpression::initIdentifiersScope(scope);
+    for (auto argument : arguments)
+    {
+        errors.add(argument->initIdentifiersScope(scope));
+    }
+    return errors;
+}
         
 std::string FunctionCall::getType() const
 {
@@ -39,7 +52,7 @@ TypeCheckErrors FunctionCall::checkTypes() const
         {
             try
             {
-                auto actualType = arguments[i].getType();
+                auto actualType = arguments[i]->getType();
                 auto expectingType = expectingArguments[i];
                 if (actualType != expectingType)
                 {

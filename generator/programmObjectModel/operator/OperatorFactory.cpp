@@ -4,53 +4,54 @@
 #include "OperatorReturn.h"
 #include "AssignmentOperator.h"
 #include "VariableDefinitionOperator.h"
+#include "FunctionCallOperator.h"
 
-IOperator OperatorFactory::create(const SyntaxTree & node)
+IOperator::OperatorPtr OperatorFactory::create(const SyntaxTree & node)
 {
     switch (node.rule)
     {
     case SyntaxRule::OperatorIf:
-        return OperatorIf(node);
+        return std::make_shared<OperatorIf>(node);
     case SyntaxRule::OperatorWhile:
-        return OperatorWhile(node);
+        return std::make_shared<OperatorWhile>(node);
     case SyntaxRule::AssignmentOperator:
-        return AssignmentOperator(node);
+        return std::make_shared<AssignmentOperator>(node);
     case SyntaxRule::FunctionCall:
-        return FunctionCallOperator(node);
+        return std::make_shared<FunctionCallOperator>(node);
     case SyntaxRule::VariableDefinition:
-        return VariableDefinitionOperator(node);
+        return std::make_shared<VariableDefinitionOperator>(node);
     }
-    throw std::exception();
+    throw "Unexpected operator type";
 }
 
-IOperator OperatorFactory::createFunctionOperator(const std::string & functionReturnType, const SyntaxTree & node)
+IOperator::OperatorPtr OperatorFactory::createFunctionOperator(const std::string & functionReturnType, const SyntaxTree & node)
 {
     switch (node.rule)
     {
     case SyntaxRule::OperatorIf:
-        return FunctionOperatorIf(functionReturnType, node);
+        return std::make_shared<FunctionOperatorIf>(functionReturnType, node);
     case SyntaxRule::OperatorWhile:
-        return FunctionOperatorWhile(functionReturnType, node);
+        return std::make_shared<FunctionOperatorWhile>(functionReturnType, node);
     case SyntaxRule::OperatorReturn:
-        return OperatorReturn(functionReturnType, node);
+        return std::make_shared<OperatorReturn>(functionReturnType, node);
     case SyntaxRule::AssignmentOperator:
-        return AssignmentOperator(node);
+        return std::make_shared<AssignmentOperator>(node);
     case SyntaxRule::FunctionCall:
-        return FunctionCallOperator(node);
+        return std::make_shared<FunctionCallOperator>(node);
     case SyntaxRule::VariableDefinition:
-        return VariableDefinitionOperator(node);
+        return std::make_shared<VariableDefinitionOperator>(node);
     }
-    throw std::exception();
+    throw "Unexpected function operator type";
 }
 
-std::vector<IOperator> OperatorFactory::createList(const SyntaxTree & list)
+std::vector<IOperator::OperatorPtr> OperatorFactory::createList(const SyntaxTree & list)
 {
-    return buildList<IOperator>(list, OperatorFactory::create);
+    return buildList<IOperator::OperatorPtr>(list, OperatorFactory::create);
 }
 
-std::vector<IOperator> OperatorFactory::createFunctionOperatorsList(const std::string & functionReturnType, const SyntaxTree & list)
+std::vector<IOperator::OperatorPtr> OperatorFactory::createFunctionOperatorsList(const std::string & functionReturnType, const SyntaxTree & list)
 {
-    return buildList<IOperator>(list, [functionReturnType](const SyntaxTree & node) {
+    return buildList<IOperator::OperatorPtr>(list, [functionReturnType](const SyntaxTree & node) {
         return OperatorFactory::createFunctionOperator(functionReturnType, node);
     });
 }

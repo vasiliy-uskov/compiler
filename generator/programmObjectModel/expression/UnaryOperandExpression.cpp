@@ -5,16 +5,23 @@ UnaryOperandExpression::UnaryOperandExpression(const SyntaxTree & node)
     sign(getTokenValue(node.children[0])),
     operand(ExpressionFactory::create(node.children[1])) {}
 
+TypeCheckErrors UnaryOperandExpression::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope)
+{
+    auto errors = BaseExpression::initIdentifiersScope(scope);
+    errors.add(operand->initIdentifiersScope(scope));
+    return errors;
+}
+
 std::string UnaryOperandExpression::getType() const
 {
-    auto operandType = operand.getType();
+    auto operandType = operand->getType();
     if (sign == "!")
     {
         if (operandType == "bool")
         {
             return "bool";
         }
-        throw TypeCheckErrors({InvalidTypeException(operand.getNode(), operandType, "bool")});
+        throw TypeCheckErrors({InvalidTypeException(operand->getNode(), operandType, "bool")});
     }
     if (sign == "-")
     { 
@@ -22,9 +29,9 @@ std::string UnaryOperandExpression::getType() const
         {
             return operandType;
         }
-        throw TypeCheckErrors({InvalidTypeException(operand.getNode(), operandType, "int|float")});
+        throw TypeCheckErrors({InvalidTypeException(operand->getNode(), operandType, "int|float")});
     }
-    throw std::exception();
+    throw "Unexpected unary operan operator type case";
 }
 
 TypeCheckErrors UnaryOperandExpression::checkTypes() const

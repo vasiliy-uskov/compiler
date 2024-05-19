@@ -12,9 +12,9 @@ private:
     const SyntaxTree node;
     std::shared_ptr<IdentifiersScope> scope = nullptr;
     
-    IExpression expression;
-    std::vector<IOperator> operatorsList;
-    std::vector<IOperator> elseOperatorsList;
+    IExpression::ExpressionPtr expression;
+    std::vector<IOperator::OperatorPtr> operatorsList;
+    std::vector<IOperator::OperatorPtr> elseOperatorsList;
 
 protected:
     OperatorIf(const std::string & functionReturnType, const SyntaxTree & node);

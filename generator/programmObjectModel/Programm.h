@@ -13,7 +13,7 @@ struct Programm
 private:
     std::shared_ptr<IdentifiersScope> scope = nullptr;
     std::optional<std::vector<FunctionDefinition>> functions;
-    std::vector<IOperator> operators;
+    std::vector<IOperator::OperatorPtr> operators;
 
     void forEachNode(const std::function<void(INode & node)>&);
 public:

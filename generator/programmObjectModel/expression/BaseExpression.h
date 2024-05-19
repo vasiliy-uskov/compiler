@@ -7,8 +7,11 @@
 
 struct IExpression : public INode
 {
-    virtual SyntaxTree getNode() const { throw 0; }
-    virtual std::string getType() const { throw 0; }
+    typedef std::shared_ptr<IExpression> ExpressionPtr;
+
+    virtual ~IExpression() {}
+    virtual SyntaxTree getNode() const = 0;
+    virtual std::string getType() const = 0;
 };
 
 struct BaseExpression : public IExpression

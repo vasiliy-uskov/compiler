@@ -6,7 +6,7 @@ OperatorIf::OperatorIf(const SyntaxTree & node)
     operatorsList(OperatorFactory::createList(node.children[2])),
     elseOperatorsList(node.children.size() > 3
         ? OperatorFactory::createList(node.children[4])
-        : std::vector<IOperator>({})) {}
+        : std::vector<IOperator::OperatorPtr>({})) {}
 
 OperatorIf::OperatorIf(const std::string & functionReturnType, const SyntaxTree & operatorNode)
     : node(node),
@@ -14,7 +14,7 @@ OperatorIf::OperatorIf(const std::string & functionReturnType, const SyntaxTree 
     operatorsList(OperatorFactory::createFunctionOperatorsList(functionReturnType, node.children[2])),
     elseOperatorsList(node.children.size() > 3
         ? OperatorFactory::createFunctionOperatorsList(functionReturnType, node.children[4])
-        : std::vector<IOperator>({})) {}
+        : std::vector<IOperator::OperatorPtr>({})) {}
 
         
 TypeCheckErrors OperatorIf::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & parentScope)
@@ -22,14 +22,14 @@ TypeCheckErrors OperatorIf::initIdentifiersScope(const std::shared_ptr<Identifie
     scope = std::make_shared<IdentifiersScope>(parentScope);
     TypeCheckErrors errors;
 
-    errors.add(expression.initIdentifiersScope(scope));
-    for (IOperator & oper : operatorsList)
+    errors.add(expression->initIdentifiersScope(scope));
+    for (IOperator::OperatorPtr & oper : operatorsList)
     {
-        errors.add(oper.initIdentifiersScope(scope));
+        errors.add(oper->initIdentifiersScope(scope));
     } 
-    for (IOperator & oper : elseOperatorsList)
+    for (IOperator::OperatorPtr & oper : elseOperatorsList)
     {
-        errors.add(oper.initIdentifiersScope(scope));
+        errors.add(oper->initIdentifiersScope(scope));
     }
     return errors;
 }
@@ -39,10 +39,10 @@ TypeCheckErrors OperatorIf::checkTypes() const
     TypeCheckErrors errors;
     try
     {
-        auto realType = expression.getType();
+        auto realType = expression->getType();
         if (realType != "bool")
         {   
-            errors.add(InvalidTypeException(expression.getNode(), realType, "bool"));
+            errors.add(InvalidTypeException(expression->getNode(), realType, "bool"));
         }
     }
     catch (TypeCheckErrors e)
@@ -50,13 +50,13 @@ TypeCheckErrors OperatorIf::checkTypes() const
         errors.add(e);
     }
 
-    for (const IOperator & oper : operatorsList)
+    for (const IOperator::OperatorPtr & oper : operatorsList)
     {
-        errors.add(oper.checkTypes());
+        errors.add(oper->checkTypes());
     }
-    for (const IOperator & oper : elseOperatorsList)
+    for (const IOperator::OperatorPtr & oper : elseOperatorsList)
     {
-        errors.add(oper.checkTypes());
+        errors.add(oper->checkTypes());
     }
     return errors;
 }

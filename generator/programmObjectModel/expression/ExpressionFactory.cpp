@@ -1,39 +1,42 @@
 #include "ExpressionFactory.h"
 #include "FunctionCall.h"
 #include "Variable.h"
-#include "RowValue.h"
+#include "RawValue.h"
 #include "BinaryOperandExpression.h"
 #include "UnaryOperandExpression.h"
 
-IExpression ExpressionFactory::create(const SyntaxTree & node)
+IExpression::ExpressionPtr ExpressionFactory::create(const SyntaxTree & node)
 {
     if (node.rule != SyntaxRule::Expression)
     {
         switch (node.rule)
         {
             case SyntaxRule::Identifier:
-                return Variable(node);
+                return std::make_shared<Variable>(node);
             case SyntaxRule::FunctionCall:
-                return FunctionCall(node);
+                return std::make_shared<FunctionCall>(node);
             case SyntaxRule::IntValue:
             case SyntaxRule::FloatValue:
             case SyntaxRule::Keyword:
-                return RowValue(node);
+                return std::make_shared<RawValue>(node);
         }
     }
     if (node.children.size() == 3)
     {
-        return BinaryOperandExpression(node);
-        
+        return std::make_shared<BinaryOperandExpression>(node);
     }
     if (node.children.size() == 2)
     {
-        return UnaryOperandExpression(node);
+        return std::make_shared<UnaryOperandExpression>(node);
     }
-    throw std::exception();
+    if (node.children.size() == 1)
+    {
+        return ExpressionFactory::create(node.children[0]);
+    }
+    throw "Unexpected expression type";
 }
 
-std::vector<IExpression> ExpressionFactory::createList(const SyntaxTree & list)
+std::vector<IExpression::ExpressionPtr> ExpressionFactory::createList(const SyntaxTree & list)
 {
-    return buildList<IExpression>(list, ExpressionFactory::create);
+    return buildList<IExpression::ExpressionPtr>(list, ExpressionFactory::create);
 }

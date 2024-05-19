@@ -1,0 +1,37 @@
+int intFunction(int a, int b) {
+    return a + b;
+}
+
+bool boolFunction() {
+    if (true)
+    {
+        while (true)
+        {
+            return true || false;
+        }
+        return false && true;
+    }
+    else
+    {
+        if (true)
+        {
+            return true;
+        }
+        return false;
+    }
+    return false;
+}
+
+void voidFunction(int a, int b) {
+    a = a + b;
+}
+
+main {
+    int intVariable;
+    float floatVariable;
+    bool boolVariable;
+    intVariable = intFunction(intVariable, intVariable);
+    voidFunction(intVariable, intVariable);
+    floatVariable = intVariable;
+    boolVariable = boolFunction();
+}

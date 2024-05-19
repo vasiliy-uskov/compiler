@@ -12,6 +12,7 @@ add_library(
   TypeCheckErrors.cpp
 
   operator/OperatorFactory.cpp
+  operator/FunctionCallOperator.cpp
   operator/OperatorIf.cpp
   operator/OperatorWhile.cpp
   operator/OperatorReturn.cpp
@@ -22,12 +23,10 @@ add_library(
   expression/BinaryOperandExpression.cpp
   expression/ExpressionFactory.cpp
   expression/FunctionCall.cpp
-  expression/RowValue.cpp
+  expression/RawValue.cpp
   expression/UnaryOperandExpression.cpp
   expression/Variable.cpp
 
   identifiersScope/IdentifiersScope.cpp
   INode.cpp
 )
-
-target_include_directories(ProgrammObjectModel PRIVATE .)

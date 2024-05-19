@@ -9,6 +9,9 @@ FetchContent_Declare(
 set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 FetchContent_MakeAvailable(googletest)
 
+set(TESTS_DIR ${PROJECT_SOURCE_DIR})
+configure_file(variables.h.in variables.h @ONLY)
+
 add_executable(
   GeneratorTests
   GeneratorTests.cpp
@@ -24,7 +27,12 @@ target_link_libraries(
   GeneratorTests
   Generator
   GTest::gtest_main
+  ${PROJECT_SOURCE_DIR}/../../parser/build/libParser.a
+  ${PROJECT_SOURCE_DIR}/../../parser/build/grammar/libGrammar.a
+  ${PROJECT_SOURCE_DIR}/../../tokenizer/build/libTokenizer.a
 )
+
+target_include_directories(GeneratorTests PRIVATE ${PROJECT_BINARY_DIR})
 
 include(GoogleTest)
 gtest_discover_tests(GeneratorTests)

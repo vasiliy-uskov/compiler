@@ -10,8 +10,9 @@
 
 struct INode
 {
-    virtual TypeCheckErrors checkTypes() const { throw 0; }
-    virtual TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) { throw 0; }
+    virtual ~INode() {}
+    virtual TypeCheckErrors checkTypes() const = 0;
+    virtual TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) = 0;
 };
 
 std::string getTokenValue(const SyntaxTree & node);

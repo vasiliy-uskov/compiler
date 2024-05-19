@@ -9,8 +9,8 @@ private:
     const SyntaxTree node;
     std::shared_ptr<IdentifiersScope> scope = nullptr;
 
-    IExpression expression;
-    std::vector<IOperator> operatorsList;
+    IExpression::ExpressionPtr expression;
+    std::vector<IOperator::OperatorPtr> operatorsList;
 
 protected:
     OperatorWhile(const std::string & functionReturnType, const SyntaxTree & node);

@@ -1,0 +1,90 @@
+int intFunction(int a, int b) {
+    bool functionLogicVariable;
+    return bool; // unexpected return type
+}
+
+void calculate(int a, int b) {
+    a = a + b;
+}
+
+void calculate(int a, int b) { //dublicate function declaration
+    a = a + b;
+}
+
+main {
+    int intVariable;
+    bool boolVariable;
+    float boolVariable;
+
+    int dublicatedVariable = 1; 
+    int dublicatedVariable = 2; //dublicate variable declaration
+    bool c = sum(1, 2) + sum(3, 4); //unexpected initializing variable value
+    d = sum(a, b) + sum(a, b); //unknown variable 
+
+    intVariable = unknownVariable; //unknown variable
+    intVariable = boolVariable; //unexpected variable type
+    intVariable = floatVariable; //unexpected variable type
+    intVariable = false; //unexpected raw value 
+    boolVariable = 10; //unexpected raw value iable
+    intVariable = 1.; //unexpected raw value 
+
+    sum(true, false); //function call with invalid variable
+    sum(1); //function call with invalid variable count
+    sum(1, 2, 3); //function call with invalid variable count
+
+    intVariable = sum(true, false); //function call with invalid variable
+    intVariable = sum(1); //function call with invalid variable count
+    intVariable = sum(1, 2, 3); //function call with invalid variable count
+    boolVariable = sum(1, 2); //unexpected return type
+
+    intVariable = !boolVariable;  // unexpected type
+    boolVariable = -intVariable;  // unexpected type
+
+    intVariable = boolVariable + boolVariable; //unexpected operandType
+    intVariable = boolVariable - boolVariable; //unexpected operandType
+    intVariable = boolVariable * boolVariable; //unexpected operandType
+    floatVariable = boolVariable / boolVariable; //unexpected operandType
+    intVariable = intVariable / intVariable; //unexpected expression type
+
+    boolVariable = intVariable || intVariable; //unexpected operandType
+    boolVariable = intVariable && intVariable; //unexpected operandType
+    boolVariable = boolVariable <= boolVariable; //unexpected operandType
+    boolVariable = boolVariable < boolVariable; //unexpected operandTypee
+    boolVariable = boolVariable > boolVariable; //unexpected operandType
+    boolVariable = boolVariable >= boolVariable; //unexpected operandType
+
+    if (boolVariable) {
+        bool ifLogicVariable;
+    }
+    else {
+        bool elseLogicVariable;
+    }
+    while (boolVariable) {
+        bool whileLogicVariable;
+    }
+    boolVariable = ifLogicVariable; //unknownVariable
+    boolVariable = elseLogicVariable; //unknownVariable
+    boolVariable = whileLogicVariable; //unknownVariable
+    boolVariable = functionLogicVariable; //unknownVariable
+
+    if (intVariable) { //unexpected expression type
+        boolVariable = true;
+    }
+    while (intVariable) { //unexpected expression type
+        boolVariable = false;
+    }
+
+    if (boolVariable) {
+        boolVariable = intVariable; //unexpected type
+    }
+    while (intVariable) {
+        boolVariable = intVariable; //unexpected type
+    }
+    if (intVariable) {
+        boolVariable = intVariable; //unexpected type
+    }
+    else {
+        boolVariable = intVariable; //unexpected type
+    }
+    
+}

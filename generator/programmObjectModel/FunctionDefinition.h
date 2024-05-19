@@ -17,15 +17,16 @@ struct FunctionDefinition : public INode
 {
 private:
     std::shared_ptr<IdentifiersScope> scope = nullptr;
-    std::vector<IOperator> operatorsList;
+    std::vector<IOperator::OperatorPtr> operatorsList;
 public:
     const SyntaxTree node;
     const std::string identifier;
     const std::string returnType;
     const std::vector<FunctionDefinitionArgument> arguments;
 
+    virtual ~FunctionDefinition() {}
     FunctionDefinition(const SyntaxTree & functionNode);
 
-    TypeCheckErrors checkTypes() const override;
-    TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
+    virtual TypeCheckErrors checkTypes() const override;
+    virtual TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
 };
