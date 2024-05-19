@@ -322,7 +322,7 @@ ParsingResult parseExpression2(ParserEngin & engin, const TokenIterator & it)
 ParsingResult parseExpression3(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::Expression, it, {
-        {parseExpression4, makeOperatorTokenParser(engin, {"<", "<=", ">=", "==", "!="}), parseExpression3},
+        {parseExpression4, makeOperatorTokenParser(engin, {"<", "<=", ">", ">=", "==", "!="}), parseExpression3},
         {parseExpression4}
     });    
 }
