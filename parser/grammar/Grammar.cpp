@@ -29,10 +29,26 @@ ParsingResult parseFunction(ParserEngin & engin, const TokenIterator & it)
             parseFunctionOperatorsList,
             makeBreaketParser(engin, "}")
         }, {
+            parseType,
+            parseIdentifier,
+            makeBreaketParser(engin, "("),
+            makeBreaketParser(engin, ")"),
+            makeBreaketParser(engin, "{"),
+            parseFunctionOperatorsList,
+            makeBreaketParser(engin, "}")
+        }, {
             makeKeywordParser(engin, "void"),
             parseIdentifier,
             makeBreaketParser(engin, "("),
             parseDefinitionArgumentsList,
+            makeBreaketParser(engin, ")"),
+            makeBreaketParser(engin, "{"),
+            parseOperatorsList,
+            makeBreaketParser(engin, "}")
+        }, {
+            makeKeywordParser(engin, "void"),
+            parseIdentifier,
+            makeBreaketParser(engin, "("),
             makeBreaketParser(engin, ")"),
             makeBreaketParser(engin, "{"),
             parseOperatorsList,
@@ -269,7 +285,8 @@ ParsingResult parseAssignment(ParserEngin & engin, const TokenIterator & it)
 ParsingResult parseFunctionCall(ParserEngin & engin, const TokenIterator & it)
 {
     return engin.processSyntaxRule(SyntaxRule::FunctionCall, it, {
-        {parseIdentifier, makeBreaketParser(engin, "("), parseCallArgumentsList, makeBreaketParser(engin, ")")}
+        {parseIdentifier, makeBreaketParser(engin, "("), parseCallArgumentsList, makeBreaketParser(engin, ")")},
+        {parseIdentifier, makeBreaketParser(engin, "("), makeBreaketParser(engin, ")")},
     });
 }
 

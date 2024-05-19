@@ -13,10 +13,10 @@ typedef std::function<ParsingResult(ParserEngin&, const TokenIterator&)> ParseFn
 
 class UnexpectedTokenException
 {
-private:
+public:
     const std::string expectedToken;
     const Token realToken;
-public:
+
     UnexpectedTokenException(const std::string & expectedToken, const Token & realToken);
 };
 

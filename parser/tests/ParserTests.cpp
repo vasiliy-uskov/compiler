@@ -21,9 +21,13 @@ void printTree(std::ostream & os, const SyntaxTree & tree, size_t level = 0)
 {
     printLevelSpacies(os, level);
     os << tree.rule << ": " << "\"";
-    for (auto token : tree.tokens)
+    for (size_t i = 0; i < tree.tokens.size(); ++i)
     {
-        os << token.value << " ";
+        if (i)
+        {
+            os << " ";
+        }
+        os << tree.tokens[i].value;
     }
     os << "\"" << std::endl;
     for (auto child : tree.children)
@@ -55,7 +59,6 @@ bool compareFiles(const std::string& p1, const std::string& p2) {
 
 TEST(ParserParseCorrectly, Parser)
 { 
-    std::cout << TESTS_PATH << std::endl;
     std::fstream input;
     std::fstream realOutput;
 

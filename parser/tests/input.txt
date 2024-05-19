@@ -1,6 +1,27 @@
 int sum(int a, int b) {
   return a + b;;
 }
+
+bool boolFunction() {
+  if (true)
+  {
+      while (true)
+      {
+          return true || false;
+      }
+      return false && true;
+  }
+  else
+  {
+      if (true)
+      {
+          return true;
+      }
+      return false;
+  }
+  return false;
+}
+
 void calculate(int a, int b) {
   b = a + b;
 }
@@ -10,6 +31,7 @@ main {
   calculate(a, b);
   b = sum(a, b) * 4 + 1;
   b = a < b && true || re;
+  boolFunction();
   if (d) {
     calculate(a, b);
   }
