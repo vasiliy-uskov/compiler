@@ -1,14 +1,14 @@
 #include "OperatorWhile.h"
 
-OperatorWhile::OperatorWhile(const SyntaxTree & node)
-    : node(node),
-    expression(ExpressionFactory::create(node.children[1])),
-    operatorsList(OperatorFactory::createList(node.children[2])) {}
+OperatorWhile::OperatorWhile(const SyntaxTree & _node)
+    : node(_node),
+    expression(ExpressionFactory::create(_node.children[1])),
+    operatorsList(OperatorFactory::createList(_node.children[2])) {}
 
-OperatorWhile::OperatorWhile(const std::string & functionReturnType, const SyntaxTree & node)
-    : node(node),
-    expression(ExpressionFactory::create(node.children[1])),
-    operatorsList(OperatorFactory::createFunctionOperatorsList(functionReturnType, node.children[2])) {}
+OperatorWhile::OperatorWhile(const std::string & functionReturnType, const SyntaxTree & _node)
+    : node(_node),
+    expression(ExpressionFactory::create(_node.children[1])),
+    operatorsList(OperatorFactory::createFunctionOperatorsList(functionReturnType, _node.children[2])) {}
         
 TypeCheckErrors OperatorWhile::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & parentScope)
 {

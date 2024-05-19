@@ -1,9 +1,9 @@
 #include "UnaryOperandExpression.h"
 
-UnaryOperandExpression::UnaryOperandExpression(const SyntaxTree & node)
-    : BaseExpression(node),
-    sign(getTokenValue(node.children[0])),
-    operand(ExpressionFactory::create(node.children[1])) {}
+UnaryOperandExpression::UnaryOperandExpression(const SyntaxTree & _node)
+    : BaseExpression(_node),
+    sign(getTokenValue(_node.children[0])),
+    operand(ExpressionFactory::create(_node.children[1])) {}
 
 TypeCheckErrors UnaryOperandExpression::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope)
 {

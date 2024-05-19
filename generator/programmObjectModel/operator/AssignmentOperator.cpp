@@ -1,9 +1,9 @@
 #include "AssignmentOperator.h"
 
-AssignmentOperator::AssignmentOperator(const SyntaxTree & node)
-    : node(node),
-    variable(Variable(node.children[0])),
-    expression(ExpressionFactory::create(node.children[2])) {}
+AssignmentOperator::AssignmentOperator(const SyntaxTree & _node)
+    : node(_node),
+    variable(Variable(_node.children[0])),
+    expression(ExpressionFactory::create(_node.children[2])) {}
 
 TypeCheckErrors AssignmentOperator::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & _scope)
 {
@@ -19,8 +19,7 @@ TypeCheckErrors AssignmentOperator::checkTypes() const
     {
         auto variableType = variable.getType();
         auto expressionType = expression->getType();
-        if (variableType != expressionType
-            && !(variableType == "flaot" && expressionType == "int"))
+        if (variableType != expressionType && !(variableType == "float" && expressionType == "int"))
         {
             return TypeCheckErrors({InvalidTypeException(expression->getNode(), expressionType, variableType)});
         }

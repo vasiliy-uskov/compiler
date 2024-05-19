@@ -1,19 +1,19 @@
 #include "OperatorIf.h"
 
-OperatorIf::OperatorIf(const SyntaxTree & node)
-    : node(node),
-    expression(ExpressionFactory::create(node.children[1])),
-    operatorsList(OperatorFactory::createList(node.children[2])),
-    elseOperatorsList(node.children.size() > 3
-        ? OperatorFactory::createList(node.children[4])
+OperatorIf::OperatorIf(const SyntaxTree & operatorNode)
+    : node(operatorNode),
+    expression(ExpressionFactory::create(operatorNode.children[1])),
+    operatorsList(OperatorFactory::createList(operatorNode.children[2])),
+    elseOperatorsList(operatorNode.children.size() > 3
+        ? OperatorFactory::createList(operatorNode.children[4])
         : std::vector<IOperator::OperatorPtr>({})) {}
 
 OperatorIf::OperatorIf(const std::string & functionReturnType, const SyntaxTree & operatorNode)
-    : node(node),
-    expression(ExpressionFactory::create(node.children[1])),
-    operatorsList(OperatorFactory::createFunctionOperatorsList(functionReturnType, node.children[2])),
-    elseOperatorsList(node.children.size() > 3
-        ? OperatorFactory::createFunctionOperatorsList(functionReturnType, node.children[4])
+    : node(operatorNode),
+    expression(ExpressionFactory::create(operatorNode.children[1])),
+    operatorsList(OperatorFactory::createFunctionOperatorsList(functionReturnType, operatorNode.children[2])),
+    elseOperatorsList(operatorNode.children.size() > 3
+        ? OperatorFactory::createFunctionOperatorsList(functionReturnType, operatorNode.children[4])
         : std::vector<IOperator::OperatorPtr>({})) {}
 
         

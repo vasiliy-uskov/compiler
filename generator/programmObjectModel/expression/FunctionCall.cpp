@@ -1,10 +1,10 @@
 #include "FunctionCall.h"
 
-FunctionCall::FunctionCall(const SyntaxTree & node)
-    : BaseExpression(node),
-    identifier(getTokenValue(node.children[0])),
-    arguments(node.children.size() == 2
-        ? ExpressionFactory::createList(node.children[1])
+FunctionCall::FunctionCall(const SyntaxTree & _node)
+    : BaseExpression(_node),
+    identifier(getTokenValue(_node.children[0])),
+    arguments(_node.children.size() == 2
+        ? ExpressionFactory::createList(_node.children[1])
         : std::vector<IExpression::ExpressionPtr>({})) {}
 
     

@@ -18,8 +18,8 @@ private:
 
 protected:
     OperatorIf(const std::string & functionReturnType, const SyntaxTree & node);
-public:
 
+public:
     OperatorIf(const SyntaxTree & node);
     TypeCheckErrors initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope) override;
     TypeCheckErrors checkTypes() const override;

@@ -1,9 +1,9 @@
 #include "OperatorReturn.h"
 
-OperatorReturn::OperatorReturn(const std::string & returnType, const SyntaxTree & node)
-    : node(node),
+OperatorReturn::OperatorReturn(const std::string & returnType, const SyntaxTree & _node)
+    : node(_node),
     expectedReturnType(returnType),
-    expression(ExpressionFactory::create(node.children[1])) {}
+    expression(ExpressionFactory::create(_node.children[1])) {}
 
 TypeCheckErrors OperatorReturn::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & _scope)
 {

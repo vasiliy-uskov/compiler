@@ -1,7 +1,7 @@
 #include "RawValue.h"
 
-RawValue::RawValue(const SyntaxTree & node)
-    : BaseExpression(node), type(getRawValueType(node)) {}
+RawValue::RawValue(const SyntaxTree & _node)
+    : BaseExpression(_node), type(getRawValueType(_node)) {}
 
 std::string RawValue::getRawValueType(const SyntaxTree & node)
 {

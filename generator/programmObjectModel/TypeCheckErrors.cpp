@@ -1,5 +1,5 @@
 #include <string>
-#include <list>
+#include <vector>
 #include "../../parser/grammar/parserEngin/syntaxTree/SyntaxTree.h"
 
 struct InvalidTypeException
@@ -44,23 +44,23 @@ struct UnknownVariableException
 
 struct TypeCheckErrors
 {
-    std::list<InvalidTypeException> invalidTypeErrors; 
-    std::list<InvalidArgumentsCountExcpetion> argumentsCountErrors;
-    std::list<DublicateDeclorationException> dublicateDeclarations;
-    std::list<UnknownFunctionException> unknownFunctionsErrors;
-    std::list<UnknownVariableException> unknownVariablesErrors;
+    std::vector<InvalidTypeException> invalidTypeErrors; 
+    std::vector<InvalidArgumentsCountExcpetion> argumentsCountErrors;
+    std::vector<DublicateDeclorationException> dublicateDeclarations;
+    std::vector<UnknownFunctionException> unknownFunctionsErrors;
+    std::vector<UnknownVariableException> unknownVariablesErrors;
 
     TypeCheckErrors() {}
 
-    TypeCheckErrors(const std::list<InvalidTypeException> & errors)
+    TypeCheckErrors(const std::vector<InvalidTypeException> & errors)
         : invalidTypeErrors(errors) {}
-    TypeCheckErrors(const std::list<InvalidArgumentsCountExcpetion> & errors)
+    TypeCheckErrors(const std::vector<InvalidArgumentsCountExcpetion> & errors)
         : argumentsCountErrors(errors) {}
-    TypeCheckErrors(const std::list<DublicateDeclorationException> & errors)
+    TypeCheckErrors(const std::vector<DublicateDeclorationException> & errors)
         : dublicateDeclarations(errors) {}    
-    TypeCheckErrors(const std::list<UnknownFunctionException> & errors)
+    TypeCheckErrors(const std::vector<UnknownFunctionException> & errors)
         : unknownFunctionsErrors(errors) {}
-    TypeCheckErrors(const std::list<UnknownVariableException> & errors)
+    TypeCheckErrors(const std::vector<UnknownVariableException> & errors)
         : unknownVariablesErrors(errors) {}
 
     void add(const TypeCheckErrors & errors)

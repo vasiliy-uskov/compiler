@@ -1,7 +1,7 @@
 #include "IdentifiersScope.h"
 
 IdentifiersScope::IdentifiersScope(const std::shared_ptr<IdentifiersScope> & parentScope) noexcept
-    :parentScope(std::shared_ptr<IdentifiersScope>(parentScope)) {}
+    :parentScope(parentScope) {}
 
 
 template <typename T>

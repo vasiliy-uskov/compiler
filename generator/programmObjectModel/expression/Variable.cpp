@@ -1,8 +1,8 @@
 #include "Variable.h"
 
-Variable::Variable(const SyntaxTree & node)
-    : BaseExpression(node),
-    identifier(getTokenValue(node)) {}
+Variable::Variable(const SyntaxTree & _node)
+    : BaseExpression(_node),
+    identifier(getTokenValue(_node)) {}
 
 std::string Variable::getType() const
 {

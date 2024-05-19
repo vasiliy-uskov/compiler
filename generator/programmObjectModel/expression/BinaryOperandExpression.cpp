@@ -1,10 +1,10 @@
 #include "BinaryOperandExpression.h"
 
-BinaryOperandExpression::BinaryOperandExpression(const SyntaxTree & node)
-    : BaseExpression(node),
-    sign(getTokenValue(node.children[1])),
-    operand1(ExpressionFactory::create(node.children[0])),
-    operand2(ExpressionFactory::create(node.children[2])) {}
+BinaryOperandExpression::BinaryOperandExpression(const SyntaxTree & _node)
+    : BaseExpression(_node),
+    sign(getTokenValue(_node.children[1])),
+    operand1(ExpressionFactory::create(_node.children[0])),
+    operand2(ExpressionFactory::create(_node.children[2])) {}
 
 TypeCheckErrors BinaryOperandExpression::initIdentifiersScope(const std::shared_ptr<IdentifiersScope> & scope)
 {

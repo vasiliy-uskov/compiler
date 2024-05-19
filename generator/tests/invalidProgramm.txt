@@ -1,6 +1,6 @@
 int intFunction(int a, int b) {
     bool functionLogicVariable;
-    return bool; // unexpected return type
+    return true; // unexpected return type
 }
 
 void calculate(int a, int b) {
@@ -14,12 +14,12 @@ void calculate(int a, int b) { //dublicate function declaration
 main {
     int intVariable;
     bool boolVariable;
-    float boolVariable;
+    float floatVariable;
 
     int dublicatedVariable = 1; 
     int dublicatedVariable = 2; //dublicate variable declaration
-    bool c = sum(1, 2) + sum(3, 4); //unexpected initializing variable value
-    d = sum(a, b) + sum(a, b); //unknown variable 
+    bool c = intFunction(1, 2) + intFunction(3, 4); //unexpected initializing variable value
+    d = intFunction(a, b) + intFunction(a, b); //unknown variable 
 
     intVariable = unknownVariable; //unknown variable
     intVariable = boolVariable; //unexpected variable type
@@ -28,14 +28,14 @@ main {
     boolVariable = 10; //unexpected raw value iable
     intVariable = 1.; //unexpected raw value 
 
-    sum(true, false); //function call with invalid variable
-    sum(1); //function call with invalid variable count
-    sum(1, 2, 3); //function call with invalid variable count
+    intFunction(true, false); //function call with invalid variable
+    intFunction(1); //function call with invalid variable count
+    intFunction(1, 2, 3); //function call with invalid variable count
 
-    intVariable = sum(true, false); //function call with invalid variable
-    intVariable = sum(1); //function call with invalid variable count
-    intVariable = sum(1, 2, 3); //function call with invalid variable count
-    boolVariable = sum(1, 2); //unexpected return type
+    intVariable = intFunction(true, false); //function call with invalid variable
+    intVariable = intFunction(1); //function call with invalid variable count
+    intVariable = intFunction(1, 2, 3); //function call with invalid variable count
+    boolVariable = intFunction(1, 2); //unexpected return type
 
     intVariable = !boolVariable;  // unexpected type
     boolVariable = -intVariable;  // unexpected type
@@ -77,14 +77,15 @@ main {
     if (boolVariable) {
         boolVariable = intVariable; //unexpected type
     }
-    while (intVariable) {
+    while (boolVariable) {
         boolVariable = intVariable; //unexpected type
     }
-    if (intVariable) {
+    if (boolVariable) {
         boolVariable = intVariable; //unexpected type
     }
     else {
         boolVariable = intVariable; //unexpected type
     }
     
+    unknownFunction();
 }
